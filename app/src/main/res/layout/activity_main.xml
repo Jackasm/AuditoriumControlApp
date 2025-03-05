@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Выберите аудиторию"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_auditorium_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Аудитория 1"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/button_auditorium_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Аудитория 2"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/button_auditorium_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Аудитория 3"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/button_auditorium_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Аудитория 4"/>
+</LinearLayout>

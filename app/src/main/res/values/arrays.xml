@@ -1,0 +1,13 @@
+<resources>
+    <string-array name="video_inputs">
+        <item>PC</item>
+        <item>VIA</item>
+        <item>Камера 1</item>
+        <item>Камера 2</item>
+    </string-array>
+
+    <string-array name="video_outputs">
+        <item>Панель</item>
+        <item>Камера</item>
+    </string-array>
+</resources>

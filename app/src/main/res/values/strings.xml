@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Auditorium Control App</string>
+    <string name="video_input">Выберите вход</string>
+    <string name="video_output">Выберите выход</string>
+</resources>
