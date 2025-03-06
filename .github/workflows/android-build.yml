@@ -34,3 +34,8 @@ jobs:
       with:
         name: app-debug
         path: app/build/outputs/apk/debug/app-debug.apk  # Путь к собранному APK
+        
+    - name: Publish to GitHub Packages
+      run: ./gradlew publish
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
