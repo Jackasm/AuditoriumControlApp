@@ -6,7 +6,23 @@ buildscript {
 
     }
 }
-
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java  // Публикует Java-компонент
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/<ваш-username>/<ваш-репозиторий>")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
 plugins {
     id 'com.android.application' version '8.9.0' apply false
     id 'com.android.library' version '8.9.0' apply false
