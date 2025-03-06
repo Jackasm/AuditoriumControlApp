@@ -26,7 +26,7 @@ afterEvaluate {
                 from components.find { it.name == "release" } // Нахождение компонента по имени "release"
                 groupId = 'com.example' // Группа артефакта
                 artifactId = 'AuditoriumControlApp' // Имя артефакта
-                version = '1.0.0' // Версия артефакта
+                version = '0.0.3' // Версия артефакта
 
                 pom {
                     name.set("AuditoriumControlApp")
