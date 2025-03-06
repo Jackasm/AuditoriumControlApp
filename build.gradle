@@ -6,6 +6,13 @@ buildscript {
 
     }
 }
+
+plugins {
+    id 'com.android.application' version '8.9.0' apply false
+    id 'com.android.library' version '8.9.0' apply false
+    id 'maven-publish'
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -23,13 +30,6 @@ publishing {
         }
     }
 }
-plugins {
-    id 'com.android.application' version '8.9.0' apply false
-    id 'com.android.library' version '8.9.0' apply false
-    id 'maven-publish'
-}
-
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
