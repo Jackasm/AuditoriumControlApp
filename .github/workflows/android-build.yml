@@ -38,8 +38,4 @@ jobs:
         name: app-debug
         path: app/build/outputs/apk/debug/app-debug.apk  # Путь к собранному APK
         
-    - name: Publish to GitHub Packages
-      run: ./gradlew publish
-      env:
-          GH_ACTOR: ${{ secrets.GH_ACTOR }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
