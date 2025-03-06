@@ -26,6 +26,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Clean Gradle cache
+      run: ./gradlew clean --refresh-dependencies
+
     - name: Build with Gradle
       run: ./gradlew assembleRelease  # Собирает debug-версию APK
 
