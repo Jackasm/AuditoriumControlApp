@@ -6,14 +6,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1' // Версия плагина Gradle для Android (8.9.0 не существует)
+        classpath 'com.android.tools.build:gradle:8.9.0'
+        // Версия плагина Gradle для Android (8.9.0 не существует)
     }
 }
 
 // Применяем плагины
 plugins {
-    id 'com.android.application' version '8.1.1' apply false // Плагин для Android-приложения
-    id 'com.android.library' version '8.1.1' apply false // Плагин для Android-библиотеки
+    id 'com.android.application' version '8.9.0' apply false // Плагин для Android-приложения
+    id 'com.android.library' version '8.9.0' apply false // Плагин для Android-библиотеки
     id 'maven-publish' // Плагин для публикации в Maven
 }
 
@@ -70,7 +71,4 @@ afterEvaluate {
     }
 }
 
-// Задача очистки
-task clean(type: Delete) {
-    delete rootProject.buildDir // Очистка директории сборки
-}
+
