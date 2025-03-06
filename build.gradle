@@ -13,19 +13,24 @@ plugins {
     id 'maven-publish'
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java  // Публикует Java-компонент
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release  // Публикует release-версию
+                groupId = 'com.example'
+                artifactId = 'your-library'
+                version = '1.0.0'
+            }
         }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Jackasm/AuditoriumControlApp")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/<ваш-username>/<ваш-репозиторий>")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
             }
         }
     }
