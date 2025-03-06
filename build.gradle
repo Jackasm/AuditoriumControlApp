@@ -27,6 +27,33 @@ afterEvaluate {
                 groupId = 'com.example' // Группа артефакта
                 artifactId = 'AuditoriumControlApp' // Имя артефакта
                 version = '1.0.0' // Версия артефакта
+
+                pom {
+                    name.set("AuditoriumControlApp")
+                    description.set("Control panel for multimedia auditoriums.")
+                    url.set("https://github.com/Jackasm/AuditoriumControlApp")
+
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("Jackasm")
+                            name.set("Your Name")
+                            email.set("your-email@example.com")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:github.com/Jackasm/AuditoriumControlApp.git")
+                        developerConnection.set("scm:git:ssh://github.com:Jackasm/AuditoriumControlApp.git")
+                        url.set("https://github.com/Jackasm/AuditoriumControlApp/tree/main")
+                    }
+                }
             }
         }
 
