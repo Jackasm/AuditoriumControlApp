@@ -25,7 +25,7 @@ afterEvaluate {
                 // Используем компонент "release" из androidComponents
                 from components.find { it.name == "release" } // Нахождение компонента по имени "release"
                 groupId = 'com.example' // Группа артефакта
-                artifactId = 'your-library' // Имя артефакта
+                artifactId = 'AuditoriumControlApp' // Имя артефакта
                 version = '1.0.0' // Версия артефакта
             }
         }
@@ -35,8 +35,8 @@ afterEvaluate {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/Jackasm/AuditoriumControlApp")
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR") // Имя пользователя GitHub
-                    password = System.getenv("GITHUB_TOKEN") // Токен GitHub
+                    username = System.getenv("GH_ACTOR") // Имя пользователя GitHub
+                    password = System.getenv("GH_TOKEN") // Токен GitHub
                 }
             }
         }
