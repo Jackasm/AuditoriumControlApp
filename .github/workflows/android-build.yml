@@ -2,12 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches:
-      - main  # Укажите ветку, на которую нужно реагировать
+    branches: [ "master" ]
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ "master" ]
 
 jobs:
   build:
