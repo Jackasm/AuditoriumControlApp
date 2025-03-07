@@ -22,10 +22,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        setupAuditoriumSettings("Аудитория 1", findViewById(R.id.auditorium_1_settings));
-        setupAuditoriumSettings("Аудитория 2", findViewById(R.id.auditorium_2_settings));
-        setupAuditoriumSettings("Аудитория 3", findViewById(R.id.auditorium_3_settings));
-        setupAuditoriumSettings("Аудitorium 4", findViewById(R.id.auditorium_4_settings));
+        setupAuditoriumSettings("Аудитория 308", findViewById(R.id.auditorium_1_settings));
+        setupAuditoriumSettings("Аудитория 203", findViewById(R.id.auditorium_2_settings));
+        setupAuditoriumSettings("Аудитория 206", findViewById(R.id.auditorium_3_settings));
+        setupAuditoriumSettings("Аудитория 503", findViewById(R.id.auditorium_4_settings));
 
         // Кнопка сохранения
         Button buttonSaveSettings = findViewById(R.id.button_save_settings);
@@ -58,10 +58,10 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveSettings() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        saveAuditoriumSettings("Аудитория 1", findViewById(R.id.auditorium_1_settings));
-        saveAuditoriumSettings("Аудитория 2", findViewById(R.id.auditorium_2_settings));
-        saveAuditoriumSettings("Аудитория 3", findViewById(R.id.auditorium_3_settings));
-        saveAuditoriumSettings("Аудитория 4", findViewById(R.id.auditorium_4_settings));
+        saveAuditoriumSettings("Аудитория 308", findViewById(R.id.auditorium_1_settings));
+        saveAuditoriumSettings("Аудитория 203", findViewById(R.id.auditorium_2_settings));
+        saveAuditoriumSettings("Аудитория 206", findViewById(R.id.auditorium_3_settings));
+        saveAuditoriumSettings("Аудитория 503", findViewById(R.id.auditorium_4_settings));
 
         editor.apply();
         finish(); // Закрываем экран настроек
