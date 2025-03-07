@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -17,9 +19,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ControlActivity extends AppCompatActivity {
 
-    private String ipAddress;
-    private int port;
+
     private NetworkManager networkManager;
+    // Флаги для игнорирования первого выбора
+    private boolean isSpinnerPanelInitialized = false;
+    private boolean isSpinnerCameraInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,124 @@ public class ControlActivity extends AppCompatActivity {
 
         setTitle(auditoriumName);
 
+        String videoProcessorIp = getDeviceIpForAuditorium(auditoriumName, "video_processor");
+        int videoProcessorPort = getDevicePortForAuditorium(auditoriumName, "video_processor");
+
+        if (videoProcessorIp == null) {
+            Toast.makeText(this, "IP-адрес видеопроцессора не найден", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Находим спиннеры
+        Spinner spinnerPanel = findViewById(R.id.spinner_video_output_panel);
+        Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
+
+        // Добавляем слушатель для спиннера "Панель"
+        spinnerPanel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Игнорируем первый выбор при загрузке активности
+                if (!isSpinnerPanelInitialized) {
+                    isSpinnerPanelInitialized = true; // Устанавливаем флаг
+                    return;
+                }
+
+                String selectedInput = (String) parent.getItemAtPosition(position);
+                int inputCode = getInputCode(selectedInput);
+
+                if (inputCode != -1) {
+                    // Отправляем команду для изменения видеовыхода "Панель"
+                    String command = "0,0,1," + inputCode + "PRinp";
+                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Ничего не выбрано
+            }
+        });
+
+        // Добавляем слушатель для спиннера "Камера"
+        spinnerCamera.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Игнорируем первый выбор при загрузке активности
+                if (!isSpinnerCameraInitialized) {
+                    isSpinnerCameraInitialized = true; // Устанавливаем флаг
+                    return;
+                }
+
+                String selectedInput = (String) parent.getItemAtPosition(position);
+                int inputCode = getInputCode(selectedInput);
+
+                if (inputCode != -1) {
+                    // Отправляем команду для изменения видеовыхода "Камера"
+                    String command = "1,0,1," + inputCode + "PRinp";
+                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Ничего не выбрано
+            }
+        });
         // Загружаем текущие настройки для всех устройств
         fetchCurrentSettings(auditoriumName);
+        int i = 0;
     }
+    private int getInputCode(String inputName) {
+        switch (inputName) {
+            case "Сигнал не выбран":
+                return 0;
+            case "VIA":
+                return 4;
+            case "PC":
+                return 5;
+            case "Камера 1":
+                return 7;
+            case "Камера 2":
+                return 8;
+            default:
+                return -1; // Недопустимое значение
+        }
+    }
+    private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, int inputCode) {
+        networkManager.sendCommand(ipAddress, port, command, response -> {
+            if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
+                try {
+                    String[] parts = response.split(",");
+                    if (parts.length >= 4 && parts[0].startsWith("PUscu")){
+                        int currentOutput = Integer.parseInt(parts[0].replace("PRinp", "")); // Номер видеовыхода
+                        int currentInput = Integer.parseInt(parts[3]); // Новый номер видеовхода
 
+                        // Проверяем, что номер видеовыхода совпадает с запросом
+                        if (currentInput != inputCode) {
+                            Toast.makeText(this, "Переключить не удалось", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Если переключение успешно, отправляем команду для подтверждения
+                        String confirmCommand = "0,1PUscu";
+                        networkManager.sendCommand(ipAddress, port, confirmCommand, confirmResponse -> {
+                            if (confirmResponse != null && confirmResponse.startsWith("PUscu"))
+                                return;
+                             else {
+                                Toast.makeText(this, "Не удалось получить подтверждение", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                       // Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    Toast.makeText(this, "Ошибка при обработке ответа: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Не удалось отправить команду", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void fetchCurrentSettings(String auditoriumName) {
         // Получаем IP-адрес и порт видеопроцессора
         String videoProcessorIp = getDeviceIpForAuditorium(auditoriumName, "video_processor");
