@@ -1,22 +1,19 @@
 package com.example.auditoriumcontrolapp;
 
 import android.app.Application;
+import android.content.Context;
 
 public class ContextHolder extends Application {
 
-    private static ContextHolder instance;
+    private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
+        context = this; // Инициализируем контекст
     }
 
-    public static ContextHolder getInstance() {
-        return instance;
-    }
-
-    public static android.content.Context getContext() {
-        return instance.getApplicationContext();
+    public static Context getContext() {
+        return context; // Возвращаем глобальный контекст
     }
 }

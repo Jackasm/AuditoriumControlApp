@@ -11,32 +11,44 @@
         android:text="Выберите аудиторию"
         android:textSize="24sp"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="16dp"/>
+        android:paddingBottom="16dp" />
 
     <Button
-        android:id="@+id/button_auditorium_1"
+        android:id="@+id/button_auditorium_308"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Аудитория 1"
-        android:layout_marginBottom="8dp"/>
+        android:text="Аудитория 308"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Кнопка Аудитория 203 -->
     <Button
-        android:id="@+id/button_auditorium_2"
+        android:id="@+id/button_auditorium_203"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Аудитория 2"
-        android:layout_marginBottom="8dp"/>
+        android:text="Аудитория 203"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Кнопка Аудитория 206 -->
     <Button
-        android:id="@+id/button_auditorium_3"
+        android:id="@+id/button_auditorium_206"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Аудитория 3"
-        android:layout_marginBottom="8dp"/>
+        android:text="Аудитория 206"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Кнопка Аудитория 503 -->
     <Button
-        android:id="@+id/button_auditorium_4"
+        android:id="@+id/button_auditorium_503"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Аудитория 4"/>
+        android:text="Аудитория 503" />
+
+    <!-- Кнопка Настройки -->
+    <Button
+        android:id="@+id/button_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Настройки"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="16dp" />
 </LinearLayout>

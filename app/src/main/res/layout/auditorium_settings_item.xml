@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Название аудитории -->
+    <TextView
+        android:id="@+id/text_auditorium_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Аудитория 1"
+        android:textSize="18sp"
+        android:paddingBottom="8dp" />
+
+    <!-- Видеопроцессор -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Видеопроцессор"
+        android:textSize="16sp"
+        android:paddingBottom="4dp" />
+
+    <EditText
+        android:id="@+id/edit_video_processor_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="IP-адрес видеопроцессора"
+        android:inputType="textUri" />
+
+    <EditText
+        android:id="@+id/edit_video_processor_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Порт видеопроцессора"
+        android:inputType="number" />
+
+    <!-- Звуковой процессор -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Звуковой процессор"
+        android:textSize="16sp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
+
+    <EditText
+        android:id="@+id/edit_audio_processor_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="IP-адрес звукового процессора"
+        android:inputType="textUri" />
+
+    <EditText
+        android:id="@+id/edit_audio_processor_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Порт звукового процессора"
+        android:inputType="number" />
+
+    <!-- Камера 1 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Камера 1"
+        android:textSize="16sp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
+
+    <EditText
+        android:id="@+id/edit_camera_1_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="IP-адрес камеры 1"
+        android:inputType="textUri" />
+
+    <EditText
+        android:id="@+id/edit_camera_1_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Порт камеры 1"
+        android:inputType="number" />
+
+    <!-- Камера 2 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Камера 2"
+        android:textSize="16sp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
+
+    <EditText
+        android:id="@+id/edit_camera_2_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="IP-адрес камеры 2"
+        android:inputType="textUri" />
+
+    <EditText
+        android:id="@+id/edit_camera_2_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Порт камеры 2"
+        android:inputType="number" />
+</LinearLayout>

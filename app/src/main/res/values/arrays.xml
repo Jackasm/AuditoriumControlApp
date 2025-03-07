@@ -1,5 +1,6 @@
 <resources>
     <string-array name="video_inputs">
+        <item>Сигнал не выбран</item> <!-- Добавляем это значение -->
         <item>PC</item>
         <item>VIA</item>
         <item>Камера 1</item>
@@ -10,4 +11,5 @@
         <item>Панель</item>
         <item>Камера</item>
     </string-array>
+
 </resources>

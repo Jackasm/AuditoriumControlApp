@@ -1,29 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.auditoriumcontrolapp">
 
+    <!-- Разрешения для работы с сетью -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".ContextHolder"
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+    android:allowBackup="true"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@drawable/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.AppCompat.Light.DarkActionBar"> <!-- Тема приложения -->
 
-        <!-- MainActivity -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"> <!-- Добавьте этот атрибут -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    <!-- Главная активность (запускается при старте приложения) -->
+    <activity
+        android:name=".MainActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
-        <!-- ControlActivity -->
-        <activity
-            android:name=".ControlActivity"
-            android:exported="false"> <!-- Добавьте этот атрибут -->
-        </activity>
-    </application>
-</manifest>
+    <!-- Активность управления аудиторией -->
+    <activity
+        android:name=".ControlActivity"
+        android:exported="false" /> <!-- Не доступна напрямую извне -->
+
+    <!-- Активность настроек -->
+    <activity
+        android:name=".SettingsActivity"
+        android:exported="false" /> <!-- Не доступна напрямую извне -->
+
+</application>
+    </manifest>
