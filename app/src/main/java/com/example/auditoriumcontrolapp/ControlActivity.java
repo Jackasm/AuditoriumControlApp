@@ -1,8 +1,11 @@
 package com.example.auditoriumcontrolapp;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -51,22 +54,25 @@ public class ControlActivity extends AppCompatActivity {
 
         // Отправляем команду для видеовыхода "Панель" (X = 0)
         String commandForOutput0 = "0,0,1,PRinp";
-        networkManager.sendCommand(videoProcessorIp, videoProcessorPort, commandForOutput0, response -> {
-            if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
-                parseAndSetVideoSettingsForOutput(response, 0); // Обработка ответа для видеовыхода "Панель"
+        networkManager.sendCommand(videoProcessorIp, videoProcessorPort, commandForOutput0, cameraresponse -> {
+            if (cameraresponse != null && !cameraresponse.equals("Ошибка соединения") && !cameraresponse.equals("Ошибка: пустой ответ")) {
+                parseAndSetVideoSettingsForOutput(cameraresponse, 0); // Обработка ответа для видеовыхода "Панель"
             } else {
                 Toast.makeText(this, "Не удалось получить настройки для видеовыхода 'Панель'", Toast.LENGTH_SHORT).show();
             }
-        });
 
-        // Отправляем команду для видеовыхода "Камера" (X = 1)
-        String commandForOutput1 = "1,0,1,PRinp";
-        networkManager.sendCommand(videoProcessorIp, videoProcessorPort, commandForOutput1, response -> {
-            if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
-                parseAndSetVideoSettingsForOutput(response, 1); // Обработка ответа для видеовыхода "Камера"
-            } else {
-                Toast.makeText(this, "Не удалось получить настройки для видеовыхода 'Камера'", Toast.LENGTH_SHORT).show();
-            }
+            // Добавляем задержку перед отправкой второй команды
+            new Handler().postDelayed(() -> {
+                // Отправляем команду для видеовыхода "Камера" (X = 1)
+                String commandForOutput1 = "1,0,1,PRinp";
+                networkManager.sendCommand(videoProcessorIp, videoProcessorPort, commandForOutput1, response -> {
+                    if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
+                        parseAndSetVideoSettingsForOutput(response, 1); // Обработка ответа для видеовыхода "Камера"
+                    } else {
+                        Toast.makeText(this, "Не удалось получить настройки для видеовыхода 'Камера'", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }, 50); // Задержка 1 секунда (1000 мс)
         });
     }
     private String getDeviceIpForAuditorium(String auditoriumName, String deviceType) {
@@ -135,8 +141,8 @@ public class ControlActivity extends AppCompatActivity {
         for (int i = 0; i < spinner.getCount(); i++) {
             if (spinner.getItemAtPosition(i) instanceof String) {
                 String inputName = (String) spinner.getItemAtPosition(i);
-                if (("PC".equals(inputName) && currentInput == 4) ||
-                        ("VIA".equals(inputName) && currentInput == 5) ||
+                if (("VIA".equals(inputName) && currentInput == 4) ||
+                        ("PC".equals(inputName) && currentInput == 5) ||
                         ("Камера 1".equals(inputName) && currentInput == 7) ||
                         ("Камера 2".equals(inputName) && currentInput == 8)) {
                     spinner.setSelection(i);
