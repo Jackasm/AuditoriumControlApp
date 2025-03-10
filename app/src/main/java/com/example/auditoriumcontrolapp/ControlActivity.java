@@ -1,6 +1,6 @@
 package com.example.auditoriumcontrolapp;
 
-import static java.lang.Thread.sleep;
+
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,26 +9,19 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ControlActivity extends AppCompatActivity {
 
 
     private NetworkManager networkManager;
-    // Флаги для игнорирования первого выбора
-    private boolean isSpinnerPanelInitialized = false;
-    private boolean isSpinnerCameraInitialized = false;
+
+    private String videoProcessorIp;
+    int videoProcessorPort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,88 +40,28 @@ public class ControlActivity extends AppCompatActivity {
 
         setTitle(auditoriumName);
 
-        String videoProcessorIp = getDeviceIpForAuditorium(auditoriumName, "video_processor");
-        int videoProcessorPort = getDevicePortForAuditorium(auditoriumName, "video_processor");
+        videoProcessorIp = getDeviceIpForAuditorium(auditoriumName, "video_processor");
+        videoProcessorPort = getDevicePortForAuditorium(auditoriumName, "video_processor");
 
         if (videoProcessorIp == null) {
             Toast.makeText(this, "IP-адрес видеопроцессора не найден", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Находим спиннеры
-        Spinner spinnerPanel = findViewById(R.id.spinner_video_output_panel);
-        Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
 
-        // Добавляем слушатель для спиннера "Панель"
-        spinnerPanel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Игнорируем первый выбор при загрузке активности
-                if (!isSpinnerPanelInitialized) {
-                    isSpinnerPanelInitialized = true; // Устанавливаем флаг
-                    return;
-                }
-
-                String selectedInput = (String) parent.getItemAtPosition(position);
-                int inputCode = getInputCode(selectedInput);
-
-                if (inputCode != -1) {
-                    // Отправляем команду для изменения видеовыхода "Панель"
-                    String command = "0,0,1," + inputCode + "PRinp";
-                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Ничего не выбрано
-            }
-        });
-
-        // Добавляем слушатель для спиннера "Камера"
-        spinnerCamera.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Игнорируем первый выбор при загрузке активности
-                if (!isSpinnerCameraInitialized) {
-                    isSpinnerCameraInitialized = true; // Устанавливаем флаг
-                    return;
-                }
-
-                String selectedInput = (String) parent.getItemAtPosition(position);
-                int inputCode = getInputCode(selectedInput);
-
-                if (inputCode != -1) {
-                    // Отправляем команду для изменения видеовыхода "Камера"
-                    String command = "1,0,1," + inputCode + "PRinp";
-                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Ничего не выбрано
-            }
-        });
         // Загружаем текущие настройки для всех устройств
         fetchCurrentSettings(auditoriumName);
 
     }
     private int getInputCode(String inputName) {
-        switch (inputName) {
-            case "Сигнал не выбран":
-                return 0;
-            case "VIA":
-                return 4;
-            case "PC":
-                return 5;
-            case "Камера 1":
-                return 7;
-            case "Камера 2":
-                return 8;
-            default:
-                return -1; // Недопустимое значение
-        }
+        return switch (inputName) {
+            case "Сигнал не выбран" -> 0;
+            case "VIA" -> 4;
+            case "PC" -> 5;
+            case "Камера 1" -> 7;
+            case "Камера 2" -> 8;
+            default -> -1; // Недопустимое значение
+        };
     }
     private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, final int inputCode) {
         attemptSendCommand(ipAddress, port, command, inputCode, 0); // Начинаем с 0 попытки
@@ -255,7 +188,7 @@ public class ControlActivity extends AppCompatActivity {
             String[] parts = response.split(",");
             if (parts.length >= 3 && parts[0].startsWith("ISsva")) {
                 int inputCode = Integer.parseInt(parts[0].replace("ISsva", ""));
-                int yValue = Integer.parseInt(parts[1]);
+
                 int availability = Integer.parseInt(parts[2]);
 
                 // Если вход доступен (N = 1), добавляем его в массив
@@ -362,60 +295,41 @@ public class ControlActivity extends AppCompatActivity {
 
         return filteredList.toArray(new String[0]); // Преобразуем список в массив
     }
-    private void addDefaultOption(Spinner spinner, String defaultOption) {
-        List<String> items = new ArrayList<>();
-        items.add(defaultOption); // Добавляем "Сигнал не выбран"
-        for (int i = 0; i < spinner.getCount(); i++) {
-            String item = (String) spinner.getItemAtPosition(i);
-            if (item != null && !item.isEmpty()) {
-                items.add(item);
-            }
-        }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items.toArray(new String[0]));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }
     private String getDeviceIpForAuditorium(String auditoriumName, String deviceType) {
         SharedPreferences sharedPreferences = getSharedPreferences("AuditoriumSettings", Context.MODE_PRIVATE);
 
-        switch (deviceType) {
-            case "video_processor":
-                return sharedPreferences.getString(auditoriumName + "_video_processor_ip", null);
-            case "audio_processor":
-                return sharedPreferences.getString(auditoriumName + "_audio_processor_ip", null);
-            case "camera_1":
-                return sharedPreferences.getString(auditoriumName + "_camera_1_ip", null);
-            case "camera_2":
-                return sharedPreferences.getString(auditoriumName + "_camera_2_ip", null);
-            default:
-                return null;
-        }
+        return switch (deviceType) {
+            case "video_processor" ->
+                    sharedPreferences.getString(auditoriumName + "_video_processor_ip", null);
+            case "audio_processor" ->
+                    sharedPreferences.getString(auditoriumName + "_audio_processor_ip", null);
+            case "camera_1" -> sharedPreferences.getString(auditoriumName + "_camera_1_ip", null);
+            case "camera_2" -> sharedPreferences.getString(auditoriumName + "_camera_2_ip", null);
+            default -> null;
+        };
     }
     private int getDevicePortForAuditorium(String auditoriumName, String deviceType) {
         SharedPreferences sharedPreferences = getSharedPreferences("AuditoriumSettings", Context.MODE_PRIVATE);
 
-        switch (deviceType) {
-            case "video_processor":
-                return sharedPreferences.getInt(auditoriumName + "_video_processor_port", 10500);
-            case "audio_processor":
-                return sharedPreferences.getInt(auditoriumName + "_audio_processor_port", 48631);
-            case "camera_1":
-            case "camera_2":
-                return sharedPreferences.getInt(auditoriumName + "_camera_1_port", 5678); // Порты камер одинаковые
-            default:
-                return -1; // Недопустимый тип устройства
-        }
+        return switch (deviceType) {
+            case "video_processor" ->
+                    sharedPreferences.getInt(auditoriumName + "_video_processor_port", 10500);
+            case "audio_processor" ->
+                    sharedPreferences.getInt(auditoriumName + "_audio_processor_port", 48631);
+            case "camera_1", "camera_2" ->
+                    sharedPreferences.getInt(auditoriumName + "_camera_1_port", 5678); // Порты камер одинаковые
+            default -> -1; // Недопустимый тип устройства
+        };
     }
     private void parseAndSetVideoSettingsForOutput(String response, int outputIndex) {
         try {
             String[] parts = response.split(",");
             if (parts.length >= 4 && parts[0].startsWith("PRinp")) {
-                // Извлекаем номер видеовыхода (X) и видеовхода (Y)
 
-                int currentInput = Integer.parseInt(parts[3]); // Номер видеовхода
+                int currentInput = Integer.parseInt(parts[3]); // Текущий номер видеовхода
 
-                // Находим соответствующий спинер
+                // Находим соответствующий спиннер
                 Spinner targetSpinner;
                 if (outputIndex == 0) { // Видеовыход "Панель"
                     targetSpinner = findViewById(R.id.spinner_video_output_panel);
@@ -425,13 +339,46 @@ public class ControlActivity extends AppCompatActivity {
                     return; // Недопустимый индекс видеовыхода
                 }
 
-                // Устанавливаем значение в спинер
+                // Устанавливаем значение в спиннер
                 setSpinnerValue(targetSpinner, currentInput);
+
+                // Добавляем слушатель для спиннера
+                addSpinnerListener(targetSpinner, videoProcessorIp, videoProcessorPort, outputIndex);
             } else {
-                Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Некорректный формат ответа PRinp", Toast.LENGTH_SHORT).show();
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            Toast.makeText(this, "Ошибка при обработке ответа видеопроцессора: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ошибка при обработке ответа PRinp: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void addSpinnerListener(Spinner spinner, String ipAddress, int port, final int outputIndex) {
+        if (spinner != null) {
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                private int lastSelectedPosition = -1; // Храним последнюю выбранную позицию
+
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    // Игнорируем первый выбор или если позиция не изменилась
+                    if (lastSelectedPosition == position) {
+                        return;
+                    }
+                    lastSelectedPosition = position;
+
+                    String selectedInput = (String) parent.getItemAtPosition(position);
+                    int inputCode = getInputCode(selectedInput);
+
+                    if (inputCode != -1) {
+                        // Отправляем команду для изменения видеовыхода
+                        String command = outputIndex + ",0,1," + inputCode + "PRinp";
+                        sendChangeVideoOutputCommand(ipAddress, port, command, inputCode);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // Ничего не выбрано
+                }
+            });
         }
     }
     private void setSpinnerValue(Spinner spinner, int currentInput) {
