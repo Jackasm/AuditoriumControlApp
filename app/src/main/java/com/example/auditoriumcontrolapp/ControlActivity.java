@@ -218,10 +218,10 @@ public class ControlActivity extends AppCompatActivity {
                     checkNextInputAvailability(videoProcessorIp, videoProcessorPort, 7, 2, availableInputs, availableInputsIndex, () -> {
                         // После проверки всех входов обновляем спиннеры
                         updateSpinners(availableInputs);
-                    });
-                });
-            });
-        });
+                    }, 0); // Начинаем с 0 попытки
+                }, 0); // Начинаем с 0 попыток
+            }, 0); // Начинаем с 0 попыток
+        }, 0); // Начинаем с 0 попыток
 
         // Отправляем команду для видеовыхода "Панель" (X = 0)
         String commandForOutput0 = "0,0,1,PRinp";
@@ -284,14 +284,36 @@ public class ControlActivity extends AppCompatActivity {
             Toast.makeText(this, "Ошибка при обработке ответа ISsva: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-    private void checkNextInputAvailability(String ipAddress, int port, int inputCode, int yValue, String[] targetArray, int[] indexArray, Runnable nextStep) {
+    private void checkNextInputAvailability(String ipAddress, int port, int inputCode, int yValue, String[] targetArray, int[] indexArray, Runnable nextStep, int attempt) {
+        if (attempt >= 5) {
+            // Если превышено количество попыток, показываем сообщение об ошибке
+            Toast.makeText(this, "Не удалось проверить доступность видеовхода", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(nextStep, 50); // Переходим к следующему шагу
+            return;
+        }
+
         checkVideoInputAvailability(ipAddress, port, inputCode, yValue, response -> {
-            if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
-                processInputAvailabilityResponse(response, targetArray, indexArray[0]++);
+            if (response == null || response.equals("Ошибка соединения") || response.equals("Ошибка: пустой ответ")) {
+                // При ошибке увеличиваем счетчик попыток и повторяем запрос
+                new Handler().postDelayed(() -> checkNextInputAvailability(ipAddress, port, inputCode, yValue, targetArray, indexArray, nextStep, attempt + 1), 50);
+                return;
             }
 
-            // Выполняем следующий шаг после задержки
-            new Handler().postDelayed(nextStep, 50);
+            try {
+                String[] parts = response.split(",");
+                if (parts.length >= 3 && parts[0].startsWith("ISsva")) {
+                    // Если ответ содержит ISsva, обрабатываем его
+                    processInputAvailabilityResponse(response, targetArray, indexArray[0]++);
+                    new Handler().postDelayed(nextStep, 50); // Переходим к следующему шагу
+                } else {
+                    // Если ответ не содержит ISsva, увеличиваем счетчик попыток и повторяем запрос
+                    new Handler().postDelayed(() -> checkNextInputAvailability(ipAddress, port, inputCode, yValue, targetArray, indexArray, nextStep, attempt + 1), 50);
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                // При ошибке парсинга увеличиваем счетчик попыток и повторяем запрос
+                Toast.makeText(this, "Ошибка при обработке ответа ISsva: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(() -> checkNextInputAvailability(ipAddress, port, inputCode, yValue, targetArray, indexArray, nextStep, attempt + 1), 50);
+            }
         });
     }
     private void updateSpinners(String[] availableInputsPanel) {
