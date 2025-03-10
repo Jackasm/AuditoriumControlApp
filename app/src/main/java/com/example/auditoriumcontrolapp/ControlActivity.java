@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -16,6 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ControlActivity extends AppCompatActivity {
 
@@ -125,40 +130,86 @@ public class ControlActivity extends AppCompatActivity {
                 return -1; // Недопустимое значение
         }
     }
-    private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, int inputCode) {
+    private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, final int inputCode) {
         networkManager.sendCommand(ipAddress, port, command, response -> {
-            if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
-                try {
-                    String[] parts = response.split(",");
-                    if (parts.length >= 4 && parts[0].startsWith("PUscu")){
-                        int currentOutput = Integer.parseInt(parts[0].replace("PRinp", "")); // Номер видеовыхода
-                        int currentInput = Integer.parseInt(parts[3]); // Новый номер видеовхода
+            if (response == null || response.equals("Ошибка соединения") || response.equals("Ошибка: пустой ответ")) {
+                Toast.makeText(this, "Не удалось отправить команду", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                        // Проверяем, что номер видеовыхода совпадает с запросом
-                        if (currentInput != inputCode) {
-                            Toast.makeText(this, "Переключить не удалось", Toast.LENGTH_SHORT).show();
-                            return;
+            // Разбиваем ответ на части
+            try {
+                String[] parts = response.split(",");
+                if (parts.length >= 4 && parts[0].startsWith("PRinp")) {
+                    int currentOutput = Integer.parseInt(parts[0].replace("PRinp", "")); // Номер видеовыхода
+                    int currentInput = Integer.parseInt(parts[3]); // Новый номер видеовхода
+
+                    // Проверяем, что номер видеовхода совпадает с запросом
+                    if (currentInput != inputCode) {
+                        Toast.makeText(this, "Переключить не удалось", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Если переключение успешно, отправляем команду для подтверждения
+                    String confirmCommand = currentOutput + ",1PUscu"; // Используем текущий видеовыход
+                    networkManager.sendCommand(ipAddress, port, confirmCommand, confirmResponse -> {
+                        if (confirmResponse != null && confirmResponse.startsWith("PUscu" + currentOutput)) {
+                            Toast.makeText(this, "Переключение успешно", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Не удалось получить подтверждение", Toast.LENGTH_SHORT).show();
                         }
+                    });
 
-                        // Если переключение успешно, отправляем команду для подтверждения
-                        String confirmCommand = "0,1PUscu";
-                        networkManager.sendCommand(ipAddress, port, confirmCommand, confirmResponse -> {
-                            if (confirmResponse != null && confirmResponse.startsWith("PUscu"))
-                                return;
-                             else {
-                                Toast.makeText(this, "Не удалось получить подтверждение", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Если ответ не начинается с PRinp, игнорируем его и продолжаем ожидание
+                    Toast.makeText(this, "Ожидание корректного ответа...", Toast.LENGTH_SHORT).show();
+
+                    // Добавляем задержку перед повторной проверкой
+                    new Handler().postDelayed(() -> {
+                        // Отправляем ту же команду снова
+                        networkManager.sendCommand(ipAddress, port, command, followUpResponse -> {
+                            if (followUpResponse != null && followUpResponse.startsWith("PRinp")) {
+                                processFollowUpResponse(followUpResponse, inputCode, ipAddress, port);
+                            } else {
+                                Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
                             }
                         });
-                    } else {
-                       // Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                    Toast.makeText(this, "Ошибка при обработке ответа: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }, 100); // Задержка 500 мс перед повторной проверкой
                 }
-            } else {
-                Toast.makeText(this, "Не удалось отправить команду", Toast.LENGTH_SHORT).show();
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                Toast.makeText(this, "Ошибка при обработке ответа: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void processFollowUpResponse(String response, int inputCode, String ipAddress, int port) {
+        try {
+            String[] parts = response.split(",");
+            if (parts.length >= 4 && parts[0].startsWith("PRinp")) {
+                int currentOutput = Integer.parseInt(parts[0].replace("PRinp", "")); // Номер видеовыхода
+                int currentInput = Integer.parseInt(parts[3]); // Новый номер видеовхода
+
+                // Проверяем, что номер видеовхода совпадает с запросом
+                if (currentInput != inputCode) {
+                    Toast.makeText(this, "Переключить не удалось", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Если переключение успешно, отправляем команду для подтверждения
+                String confirmCommand = currentOutput + ",1PUscu";
+                networkManager.sendCommand(ipAddress, port, confirmCommand, confirmResponse -> {
+                    if (confirmResponse != null && confirmResponse.startsWith("PUscu" + currentOutput)) {
+                        Toast.makeText(this, "Переключение успешно", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Не удалось получить подтверждение", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } else {
+                Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
+            }
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            Toast.makeText(this, "Ошибка при обработке ответа: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
     private void fetchCurrentSettings(String auditoriumName) {
         // Получаем IP-адрес и порт видеопроцессора
@@ -169,6 +220,29 @@ public class ControlActivity extends AppCompatActivity {
             Toast.makeText(this, "IP-адрес видеопроцессора не найден", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Создаем массивы для доступных входов
+        final String[] availableInputs = new String[4]; // Для Панели
+
+
+        // Массивы для индексов
+        final int[] availableInputsIndex = {0};
+
+
+        // Проверяем доступность PC
+        checkNextInputAvailability(videoProcessorIp, videoProcessorPort, 4, 3, availableInputs, availableInputsIndex, () -> {
+            // Проверяем доступность VIA
+            checkNextInputAvailability(videoProcessorIp, videoProcessorPort, 3, 3, availableInputs, availableInputsIndex, () -> {
+                // Проверяем доступность Камеры 1
+                checkNextInputAvailability(videoProcessorIp, videoProcessorPort, 6, 2, availableInputs, availableInputsIndex, () -> {
+                    // Проверяем доступность Камеры 2
+                    checkNextInputAvailability(videoProcessorIp, videoProcessorPort, 7, 2, availableInputs, availableInputsIndex, () -> {
+                        // После проверки всех входов обновляем спиннеры
+                        updateSpinners(availableInputs);
+                    });
+                });
+            });
+        });
 
         // Отправляем команду для видеовыхода "Панель" (X = 0)
         String commandForOutput0 = "0,0,1,PRinp";
@@ -192,6 +266,101 @@ public class ControlActivity extends AppCompatActivity {
                 });
             }, 50); // Задержка 1 секунда (1000 мс)
         });
+    }
+    private void checkVideoInputAvailability(String ipAddress, int port, int inputCode, int yValue, NetworkManager.OnResponseListener listener) {
+        String command = inputCode + "," + yValue + ",ISsva";
+        networkManager.sendCommand(ipAddress, port, command, listener);
+    }
+    private void processInputAvailabilityResponse(String response, String[] targetArray, int index) {
+        try {
+            String[] parts = response.split(",");
+            if (parts.length >= 3 && parts[0].startsWith("ISsva")) {
+                int inputCode = Integer.parseInt(parts[0].replace("ISsva", ""));
+                int yValue = Integer.parseInt(parts[1]);
+                int availability = Integer.parseInt(parts[2]);
+
+                // Если вход доступен (N = 1), добавляем его в массив
+                if (availability == 1) {
+                    switch (inputCode) {
+                        case 4:
+                            targetArray[index] = "PC";
+                            break;
+                        case 3:
+                            targetArray[index] = "VIA";
+                            break;
+                        case 6:
+                            targetArray[index] = "Камера 1";
+                            break;
+                        case 7:
+                            targetArray[index] = "Камера 2";
+                            break;
+                        default:
+                            targetArray[index] = null; // Недопустимый вход
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Некорректный формат ответа ISsva", Toast.LENGTH_SHORT).show();
+            }
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            Toast.makeText(this, "Ошибка при обработке ответа ISsva: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void checkNextInputAvailability(String ipAddress, int port, int inputCode, int yValue, String[] targetArray, int[] indexArray, Runnable nextStep) {
+        checkVideoInputAvailability(ipAddress, port, inputCode, yValue, response -> {
+            if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
+                processInputAvailabilityResponse(response, targetArray, indexArray[0]++);
+            }
+
+            // Выполняем следующий шаг после задержки
+            new Handler().postDelayed(nextStep, 50);
+        });
+    }
+    private void updateSpinners(String[] availableInputsPanel) {
+        // Находим спиннеры
+        Spinner spinnerPanel = findViewById(R.id.spinner_video_output_panel);
+        Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
+
+        // Фильтруем доступные входы
+        String[] filteredPanelInputs = filterAvailableInputs(availableInputsPanel);
+        String[] filteredCameraInputs = filterAvailableInputs(availableInputsPanel);
+
+        // Устанавливаем новые адаптеры для спиннеров
+        ArrayAdapter<String> panelAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filteredPanelInputs);
+        panelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPanel.setAdapter(panelAdapter);
+
+        ArrayAdapter<String> cameraAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filteredCameraInputs);
+        cameraAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCamera.setAdapter(cameraAdapter);
+
+        // Добавляем "Сигнал не выбран" как первый элемент
+        addDefaultOption(spinnerPanel, "Сигнал не выбран");
+        addDefaultOption(spinnerCamera, "Сигнал не выбран");
+    }
+    private String[] filterAvailableInputs(String[] inputs) {
+        List<String> filteredList = new ArrayList<>();
+
+        for (String input : inputs) {
+            if (input != null && !input.isEmpty()) {
+                filteredList.add(input);
+            }
+        }
+
+        return filteredList.toArray(new String[0]); // Преобразуем список в массив
+    }
+    private void addDefaultOption(Spinner spinner, String defaultOption) {
+        List<String> items = new ArrayList<>();
+        items.add(defaultOption); // Добавляем "Сигнал не выбран"
+        for (int i = 0; i < spinner.getCount(); i++) {
+            String item = (String) spinner.getItemAtPosition(i);
+            if (item != null && !item.isEmpty()) {
+                items.add(item);
+            }
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items.toArray(new String[0]));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
     }
     private String getDeviceIpForAuditorium(String auditoriumName, String deviceType) {
         SharedPreferences sharedPreferences = getSharedPreferences("AuditoriumSettings", Context.MODE_PRIVATE);
