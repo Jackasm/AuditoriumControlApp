@@ -131,13 +131,32 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
     private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, final int inputCode) {
+        attemptSendCommand(ipAddress, port, command, inputCode, 0); // Начинаем с 0 попытки
+    }
+
+    /**
+     * Попытка отправки команды для изменения видеовыхода.
+     *
+     * @param ipAddress   IP-адрес видеопроцессора
+     * @param port        Порт видеопроцессора
+     * @param command     Команда для изменения видеовыхода
+     * @param inputCode   Код выбранного видеовхода
+     * @param attempt     Текущая попытка (максимум 5)
+     */
+    private void attemptSendCommand(String ipAddress, int port, String command, final int inputCode, int attempt) {
+        if (attempt >= 5) {
+            // Если превышено количество попыток, показываем сообщение об ошибке
+            Toast.makeText(this, "Не удалось переключить сигнал", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         networkManager.sendCommand(ipAddress, port, command, response -> {
             if (response == null || response.equals("Ошибка соединения") || response.equals("Ошибка: пустой ответ")) {
-                Toast.makeText(this, "Не удалось отправить команду", Toast.LENGTH_SHORT).show();
+                // При ошибке увеличиваем счетчик попыток и повторяем запрос
+                new Handler().postDelayed(() -> attemptSendCommand(ipAddress, port, command, inputCode, attempt + 1), 500);
                 return;
             }
 
-            // Разбиваем ответ на части
             try {
                 String[] parts = response.split(",");
                 if (parts.length >= 4 && parts[0].startsWith("PRinp")) {
@@ -151,7 +170,7 @@ public class ControlActivity extends AppCompatActivity {
                     }
 
                     // Если переключение успешно, отправляем команду для подтверждения
-                    String confirmCommand = currentOutput + ",1PUscu"; // Используем текущий видеовыход
+                    String confirmCommand = currentOutput + ",1PUscu";
                     networkManager.sendCommand(ipAddress, port, confirmCommand, confirmResponse -> {
                         if (confirmResponse != null && confirmResponse.startsWith("PUscu" + currentOutput)) {
                             Toast.makeText(this, "Переключение успешно", Toast.LENGTH_SHORT).show();
@@ -161,55 +180,15 @@ public class ControlActivity extends AppCompatActivity {
                     });
 
                 } else {
-                    // Если ответ не начинается с PRinp, игнорируем его и продолжаем ожидание
-                    Toast.makeText(this, "Ожидание корректного ответа...", Toast.LENGTH_SHORT).show();
-
-                    // Добавляем задержку перед повторной проверкой
-                    new Handler().postDelayed(() -> {
-                        // Отправляем ту же команду снова
-                        networkManager.sendCommand(ipAddress, port, command, followUpResponse -> {
-                            if (followUpResponse != null && followUpResponse.startsWith("PRinp")) {
-                                processFollowUpResponse(followUpResponse, inputCode, ipAddress, port);
-                            } else {
-                                Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }, 100); // Задержка 500 мс перед повторной проверкой
+                    // Если ответ не содержит PRinp, увеличиваем счетчик попыток и повторяем запрос
+                    new Handler().postDelayed(() -> attemptSendCommand(ipAddress, port, command, inputCode, attempt + 1), 500);
                 }
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                // При ошибке парсинга увеличиваем счетчик попыток и повторяем запрос
+                new Handler().postDelayed(() -> attemptSendCommand(ipAddress, port, command, inputCode, attempt + 1), 500);
                 Toast.makeText(this, "Ошибка при обработке ответа: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-    private void processFollowUpResponse(String response, int inputCode, String ipAddress, int port) {
-        try {
-            String[] parts = response.split(",");
-            if (parts.length >= 4 && parts[0].startsWith("PRinp")) {
-                int currentOutput = Integer.parseInt(parts[0].replace("PRinp", "")); // Номер видеовыхода
-                int currentInput = Integer.parseInt(parts[3]); // Новый номер видеовхода
-
-                // Проверяем, что номер видеовхода совпадает с запросом
-                if (currentInput != inputCode) {
-                    Toast.makeText(this, "Переключить не удалось", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Если переключение успешно, отправляем команду для подтверждения
-                String confirmCommand = currentOutput + ",1PUscu";
-                networkManager.sendCommand(ipAddress, port, confirmCommand, confirmResponse -> {
-                    if (confirmResponse != null && confirmResponse.startsWith("PUscu" + currentOutput)) {
-                        Toast.makeText(this, "Переключение успешно", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Не удалось получить подтверждение", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            } else {
-                Toast.makeText(this, "Некорректный формат ответа видеопроцессора", Toast.LENGTH_SHORT).show();
-            }
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            Toast.makeText(this, "Ошибка при обработке ответа: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
     }
     private void fetchCurrentSettings(String auditoriumName) {
         // Получаем IP-адрес и порт видеопроцессора
