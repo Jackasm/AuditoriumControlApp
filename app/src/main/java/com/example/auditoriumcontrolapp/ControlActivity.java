@@ -112,7 +112,7 @@ public class ControlActivity extends AppCompatActivity {
         });
         // Загружаем текущие настройки для всех устройств
         fetchCurrentSettings(auditoriumName);
-
+        int i = 0;
     }
     private int getInputCode(String inputName) {
         switch (inputName) {
@@ -325,31 +325,18 @@ public class ControlActivity extends AppCompatActivity {
         String[] filteredPanelInputs = filterAvailableInputs(availableInputsPanel);
         String[] filteredCameraInputs = filterAvailableInputs(availableInputsPanel);
 
-        // Добавляем "Сигнал не выбран" как первый элемент
-        List<String> panelItems = new ArrayList<>();
-        panelItems.add("Сигнал не выбран");
-        for (String input : filteredPanelInputs) {
-            if (input != null && !input.isEmpty()) {
-                panelItems.add(input);
-            }
-        }
-
-        List<String> cameraItems = new ArrayList<>();
-        cameraItems.add("Сигнал не выбран");
-        for (String input : filteredCameraInputs) {
-            if (input != null && !input.isEmpty()) {
-                cameraItems.add(input);
-            }
-        }
-
         // Устанавливаем новые адаптеры для спиннеров
-        ArrayAdapter<String> panelAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, panelItems.toArray(new String[0]));
+        ArrayAdapter<String> panelAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filteredPanelInputs);
         panelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPanel.setAdapter(panelAdapter);
 
-        ArrayAdapter<String> cameraAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cameraItems.toArray(new String[0]));
+        ArrayAdapter<String> cameraAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filteredCameraInputs);
         cameraAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCamera.setAdapter(cameraAdapter);
+
+        // Добавляем "Сигнал не выбран" как первый элемент
+        addDefaultOption(spinnerPanel, "Сигнал не выбран");
+        addDefaultOption(spinnerCamera, "Сигнал не выбран");
     }
     private String[] filterAvailableInputs(String[] inputs) {
         List<String> filteredList = new ArrayList<>();
@@ -446,7 +433,7 @@ public class ControlActivity extends AppCompatActivity {
                         ("PC".equals(inputName) && currentInput == 5) ||
                         ("Камера 1".equals(inputName) && currentInput == 7) ||
                         ("Камера 2".equals(inputName) && currentInput == 8)) {
-                    spinner.setSelection(i, false);
+                    spinner.setSelection(i);
                     return;
                 }
             }
