@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -147,7 +148,7 @@ public class ControlActivity extends AppCompatActivity {
             return;
         }
 
-        // Получаем список доступных видеовходов
+        // Получаем список доступных видеовходов с задержкой
         checkInputsAvailability(videoProcessorIp, videoProcessorPort, availableInputs -> {
             // Заполняем спиннеры доступными видеовходами
             updateSpinners(availableInputs);
@@ -170,7 +171,8 @@ public class ControlActivity extends AppCompatActivity {
         String[] availableInputs = new String[4];
         int[] index = {0};
 
-        checkNextInput(ip, port, inputsToCheck, availableInputs, index, () -> {
+        // Начинаем проверку с задержкой
+        checkNextInputWithDelay(ip, port, inputsToCheck, availableInputs, index, () -> {
             // Фильтруем null значения и передаем результат
             String[] filteredInputs = Arrays.stream(availableInputs)
                     .filter(input -> input != null && !input.isEmpty())
@@ -178,7 +180,25 @@ public class ControlActivity extends AppCompatActivity {
             listener.onInputsAvailable(filteredInputs);
         }, 0);
     }
+    private void checkNextInputWithDelay(String ip, int port, int[][] inputsToCheck, String[] availableInputs, int[] index, Runnable onComplete, int attempt) {
+        if (attempt >= inputsToCheck.length) {
+            onComplete.run(); // Вызываем onComplete после проверки всех входов
+            return;
+        }
 
+        int inputCode = inputsToCheck[attempt][0];
+        int yValue = inputsToCheck[attempt][1];
+
+        // Проверяем доступность текущего входа
+        checkVideoInputAvailability(ip, port, inputCode, yValue, response -> {
+            processInputAvailabilityResponse(response, availableInputs, index[0]++);
+
+            // Добавляем задержку перед проверкой следующего входа
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                checkNextInputWithDelay(ip, port, inputsToCheck, availableInputs, index, onComplete, attempt + 1);
+            }, 100); // Задержка 100 мс
+        });
+    }
     interface OnInputsAvailableListener {
         void onInputsAvailable(String[] availableInputs);
     }
