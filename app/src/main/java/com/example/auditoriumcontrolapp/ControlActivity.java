@@ -18,7 +18,7 @@ import java.util.List;
 public class ControlActivity extends AppCompatActivity {
 
     private NetworkManager networkManager;
-
+    private boolean isUserSelection = false; // Флаг для отслеживания пользовательского выбора
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,40 +52,35 @@ public class ControlActivity extends AppCompatActivity {
         Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
 
         // Добавляем слушатели
-        spinnerPanel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedInput = (String) parent.getItemAtPosition(position);
-                int inputCode = getInputCode(selectedInput);
-
-                if (inputCode != -1) {
-                    String command = "0,0,1," + inputCode + "PRinp";
-                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        spinnerCamera.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedInput = (String) parent.getItemAtPosition(position);
-                int inputCode = getInputCode(selectedInput);
-
-                if (inputCode != -1) {
-                    String command = "1,0,1," + inputCode + "PRinp";
-                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        setupSpinnerListener(spinnerPanel, videoProcessorIp, videoProcessorPort, 0);
+        setupSpinnerListener(spinnerCamera, videoProcessorIp, videoProcessorPort, 1);
     }
 
+    private void setupSpinnerListener(Spinner spinner, String ip, int port, int outputIndex) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Игнорируем вызов, если выбор сделан программно
+                if (!isUserSelection) {
+                    return;
+                }
 
+                // Обработка выбора пользователя
+                String selectedInput = (String) parent.getItemAtPosition(position);
+                int inputCode = getInputCode(selectedInput);
+
+                if (inputCode != -1) {
+                    String command = outputIndex + ",0,1," + inputCode + "PRinp";
+                    sendChangeVideoOutputCommand(ip, port, command, inputCode);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Ничего не выбрано
+            }
+        });
+    }
 
     private int getInputCode(String inputName) {
         switch (inputName) {
@@ -263,8 +258,10 @@ public class ControlActivity extends AppCompatActivity {
                 AdapterView.OnItemSelectedListener listener = targetSpinner.getOnItemSelectedListener();
                 targetSpinner.setOnItemSelectedListener(null);
 
-                // Устанавливаем значение
+                // Устанавливаем значение программно
+                isUserSelection = false; // Указываем, что выбор программный
                 setSpinnerValue(targetSpinner, currentInput);
+                isUserSelection = true; // Восстанавливаем флаг
 
                 // Восстанавливаем слушатель
                 targetSpinner.setOnItemSelectedListener(listener);
