@@ -10,16 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ControlActivity extends AppCompatActivity {
 
     private NetworkManager networkManager;
-    private boolean isSpinnerPanelInitialized = false;
-    private boolean isSpinnerCameraInitialized = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,26 +51,32 @@ public class ControlActivity extends AppCompatActivity {
         Spinner spinnerPanel = findViewById(R.id.spinner_video_output_panel);
         Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
 
-        setupSpinnerListener(spinnerPanel, videoProcessorIp, videoProcessorPort, 0, () -> isSpinnerPanelInitialized = true);
-        setupSpinnerListener(spinnerCamera, videoProcessorIp, videoProcessorPort, 1, () -> isSpinnerCameraInitialized = true);
-    }
-
-    private void setupSpinnerListener(Spinner spinner, String ip, int port, int outputIndex, Runnable onInitialized) {
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Добавляем слушатели
+        spinnerPanel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Проверяем флаг инициализации
-                if ((outputIndex == 0 && !isSpinnerPanelInitialized) || (outputIndex == 1 && !isSpinnerCameraInitialized)) {
-                    onInitialized.run(); // Устанавливаем флаг инициализации
-                    return;
-                }
-
                 String selectedInput = (String) parent.getItemAtPosition(position);
                 int inputCode = getInputCode(selectedInput);
 
                 if (inputCode != -1) {
-                    String command = outputIndex + ",0,1," + inputCode + "PRinp";
-                    sendChangeVideoOutputCommand(ip, port, command, inputCode);
+                    String command = "0,0,1," + inputCode + "PRinp";
+                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        spinnerCamera.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedInput = (String) parent.getItemAtPosition(position);
+                int inputCode = getInputCode(selectedInput);
+
+                if (inputCode != -1) {
+                    String command = "1,0,1," + inputCode + "PRinp";
+                    sendChangeVideoOutputCommand(videoProcessorIp, videoProcessorPort, command, inputCode);
                 }
             }
 
@@ -79,6 +84,8 @@ public class ControlActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
+
+
 
     private int getInputCode(String inputName) {
         switch (inputName) {
@@ -145,25 +152,40 @@ public class ControlActivity extends AppCompatActivity {
             return;
         }
 
-        // Создаем массив для доступных входов
-        String[] availableInputs = new String[4];
+        // Получаем список доступных видеовходов
+        checkInputsAvailability(videoProcessorIp, videoProcessorPort, availableInputs -> {
+            // Заполняем спиннеры доступными видеовходами
+            updateSpinners(availableInputs);
 
-        // Проверяем доступность входов и обновляем спиннеры
-        checkInputsAvailability(videoProcessorIp, videoProcessorPort, availableInputs, () -> {
-            updateSpinners(availableInputs); // Передаем массив availableInputs
-        });
+            // Получаем текущие значения видеовходов и устанавливаем их в спиннеры
+            sendCommandWithDelay(videoProcessorIp, videoProcessorPort, "0,0,1,PRinp", 0, response -> {
+                parseAndSetVideoSettingsForOutput(response, 0);
+                sendCommandWithDelay(videoProcessorIp, videoProcessorPort, "1,0,1,PRinp", 50, response1 -> {
+                    parseAndSetVideoSettingsForOutput(response1, 1);
 
-        sendCommandWithDelay(videoProcessorIp, videoProcessorPort, "0,0,1,PRinp", 0, response -> {
-            parseAndSetVideoSettingsForOutput(response, 0);
-            sendCommandWithDelay(videoProcessorIp, videoProcessorPort, "1,0,1,PRinp", 50, response1 -> parseAndSetVideoSettingsForOutput(response1, 1));
+                    // Только после этого добавляем слушатели
+                    setupSpinners(videoProcessorIp, videoProcessorPort);
+                });
+            });
         });
     }
 
-    private void checkInputsAvailability(String ip, int port, String[] availableInputs, Runnable onComplete) {
+    private void checkInputsAvailability(String ip, int port, OnInputsAvailableListener listener) {
         int[][] inputsToCheck = {{4, 3}, {3, 3}, {6, 2}, {7, 2}};
+        String[] availableInputs = new String[4];
         int[] index = {0};
 
-        checkNextInput(ip, port, inputsToCheck, availableInputs, index, onComplete, 0);
+        checkNextInput(ip, port, inputsToCheck, availableInputs, index, () -> {
+            // Фильтруем null значения и передаем результат
+            String[] filteredInputs = Arrays.stream(availableInputs)
+                    .filter(input -> input != null && !input.isEmpty())
+                    .toArray(String[]::new);
+            listener.onInputsAvailable(filteredInputs);
+        }, 0);
+    }
+
+    interface OnInputsAvailableListener {
+        void onInputsAvailable(String[] availableInputs);
     }
 
     private void checkNextInput(String ip, int port, int[][] inputsToCheck, String[] availableInputs, int[] index, Runnable onComplete, int attempt) {
@@ -214,16 +236,16 @@ public class ControlActivity extends AppCompatActivity {
         Spinner spinnerPanel = findViewById(R.id.spinner_video_output_panel);
         Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
 
-        List<String> panelItems = Stream.concat(Stream.of("Сигнал не выбран"), Arrays.stream(availableInputs).filter(input -> input != null && !input.isEmpty()))
-                .collect(Collectors.toList());
+        // Добавляем "Сигнал не выбран" в начало списка
+        List<String> items = new ArrayList<>();
+        items.add("Сигнал не выбран");
+        items.addAll(Arrays.asList(availableInputs));
 
-        ArrayAdapter<String> panelAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, panelItems);
-        panelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPanel.setAdapter(panelAdapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        ArrayAdapter<String> cameraAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, panelItems);
-        cameraAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCamera.setAdapter(cameraAdapter);
+        spinnerPanel.setAdapter(adapter);
+        spinnerCamera.setAdapter(adapter);
     }
 
     private void sendCommandWithDelay(String ip, int port, String command, int delay, NetworkManager.OnResponseListener listener) {
@@ -236,7 +258,16 @@ public class ControlActivity extends AppCompatActivity {
             if (parts.length >= 4 && parts[0].startsWith("PRinp")) {
                 int currentInput = Integer.parseInt(parts[3]);
                 Spinner targetSpinner = outputIndex == 0 ? findViewById(R.id.spinner_video_output_panel) : findViewById(R.id.spinner_video_output_camera);
+
+                // Временно отключаем слушатель
+                AdapterView.OnItemSelectedListener listener = targetSpinner.getOnItemSelectedListener();
+                targetSpinner.setOnItemSelectedListener(null);
+
+                // Устанавливаем значение
                 setSpinnerValue(targetSpinner, currentInput);
+
+                // Восстанавливаем слушатель
+                targetSpinner.setOnItemSelectedListener(listener);
             } else {
                 showToast("Некорректный формат ответа видеопроцессора");
             }
