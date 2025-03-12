@@ -290,50 +290,31 @@
                     </LinearLayout>
                 </LinearLayout>
         </LinearLayout>
-
         <!-- Камеры -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Камера 1"
-            android:textSize="16sp"
-            android:paddingTop="8dp"
-            android:paddingBottom="4dp" />
+            android:orientation="vertical"
+            android:paddingTop="8dp">
 
-        <TextView
-            android:id="@+id/camera_1_pan_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Поворот: -"
-            android:textSize="14sp" />
+            <!-- Кнопка Камера 1 -->
+            <Button
+                android:id="@+id/button_camera_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Управление Камерой 1"
+                android:textSize="16sp"
+                android:padding="8dp" />
 
-        <TextView
-            android:id="@+id/camera_1_tilt_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Наклон: -"
-            android:textSize="14sp" />
+            <!-- Кнопка Камера 2 -->
+            <Button
+                android:id="@+id/button_camera_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Управление Камерой 2"
+                android:textSize="16sp"
+                android:padding="8dp" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Камера 2"
-            android:textSize="16sp"
-            android:paddingTop="8dp"
-            android:paddingBottom="4dp" />
-
-        <TextView
-            android:id="@+id/camera_2_pan_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Поворот: -"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/camera_2_tilt_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Наклон: -"
-            android:textSize="14sp" />
     </LinearLayout>
 </ScrollView>

@@ -35,5 +35,10 @@
         android:name=".SettingsActivity"
         android:exported="false" /> <!-- Не доступна напрямую извне -->
 
+    <!-- Активность управления аудиторией -->
+    <activity
+        android:name=".CameraControlActivity"
+        android:exported="false" /> <!-- Не доступна напрямую извне -->
+
 </application>
     </manifest>

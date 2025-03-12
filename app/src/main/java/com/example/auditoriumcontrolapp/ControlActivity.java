@@ -1,6 +1,7 @@
 package com.example.auditoriumcontrolapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -25,6 +26,7 @@ public class ControlActivity extends AppCompatActivity {
 
     private static final String TAG = "ControlActivity"; // Тег для логгирования
     private NetworkManager networkManager;
+
     private boolean isUserSelection = false; // Флаг для отслеживания пользовательского выбора
 
     @Override
@@ -60,6 +62,8 @@ public class ControlActivity extends AppCompatActivity {
         fetchVideoSettings(videoProcessorIp, videoProcessorPort, () -> {
             fetchAudioSettings(audioProcessorIp, audioProcessorPort);
         });
+        // Настройка кнопок для управления камерами
+        setupCameraButtons(auditoriumName);
     }
 
     private void fetchVideoSettings(String videoProcessorIp, int videoProcessorPort, Runnable onComplete) {
@@ -549,7 +553,42 @@ public class ControlActivity extends AppCompatActivity {
             default: throw new IllegalArgumentException("Invalid device index");
         }
     }
+    private void setupCameraButtons(String auditoriumName) {
+        Button buttonCamera1 = findViewById(R.id.button_camera_1);
+        Button buttonCamera2 = findViewById(R.id.button_camera_2);
 
+        buttonCamera1.setOnClickListener(view -> {
+            String cameraIp = getDeviceIpForAuditorium(auditoriumName, "camera_1");
+            int cameraPort = getDevicePortForAuditorium(auditoriumName, "camera_1");
+
+            if (cameraIp == null) {
+                showToast("IP-адрес Камеры 1 не найден");
+                return;
+            }
+
+            // Запускаем новую активность для управления Камерой 1
+            Intent intent = new Intent(this, CameraControlActivity.class);
+            intent.putExtra("camera_ip", cameraIp);
+            intent.putExtra("camera_port", cameraPort);
+            startActivity(intent);
+        });
+
+        buttonCamera2.setOnClickListener(view -> {
+            String cameraIp = getDeviceIpForAuditorium(auditoriumName, "camera_2");
+            int cameraPort = getDevicePortForAuditorium(auditoriumName, "camera_2");
+
+            if (cameraIp == null) {
+                showToast("IP-адрес Камеры 2 не найден");
+                return;
+            }
+
+            // Запускаем новую активность для управления Камерой 2
+            Intent intent = new Intent(this, CameraControlActivity.class);
+            intent.putExtra("camera_ip", cameraIp);
+            intent.putExtra("camera_port", cameraPort);
+            startActivity(intent);
+        });
+    }
     private String getDeviceIpForAuditorium(String auditoriumName, String deviceType) {
         SharedPreferences sharedPreferences = getSharedPreferences("AuditoriumSettings", Context.MODE_PRIVATE);
         return sharedPreferences.getString(auditoriumName + "_" + deviceType + "_ip", null);

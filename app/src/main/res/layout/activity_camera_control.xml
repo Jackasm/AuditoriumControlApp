@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- TextureView для отображения видео -->
+    <TextureView
+        android:id="@+id/video_texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Крест для управления поворотом и наклоном -->
+    <LinearLayout
+        android:id="@+id/cross_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerInParent="true">
+
+        <!-- Кнопка "Вверх" -->
+        <Button
+            android:id="@+id/button_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▲"
+            android:textSize="24sp" />
+
+        <!-- Горизонтальный ряд кнопок -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingVertical="8dp">
+
+            <!-- Кнопка "Влево" -->
+            <Button
+                android:id="@+id/button_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="◄"
+                android:textSize="24sp" />
+
+            <!-- Кнопка "Вправо" -->
+            <Button
+                android:id="@+id/button_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="►"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <!-- Кнопка "Вниз" -->
+        <Button
+            android:id="@+id/button_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▼"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <!-- Кнопки "Приблизить" и "Отдалить" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_below="@id/cross_layout"
+        android:paddingTop="16dp">
+
+        <!-- Кнопка "Приблизить" -->
+        <Button
+            android:id="@+id/button_zoom_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Приблизить"
+            android:padding="8dp" />
+
+        <!-- Кнопка "Отдалить" -->
+        <Button
+            android:id="@+id/button_zoom_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Отдалить"
+            android:padding="8dp"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+</RelativeLayout>
