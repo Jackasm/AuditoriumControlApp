@@ -48,11 +48,11 @@ public class SettingsActivity extends AppCompatActivity {
         editVideoProcessorIp.setText(sharedPreferences.getString(auditoriumName + "_video_processor_ip", "192.168.1.100"));
         editVideoProcessorPort.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_video_processor_port", 10500)));
         editAudioProcessorIp.setText(sharedPreferences.getString(auditoriumName + "_audio_processor_ip", "192.168.1.101"));
-        editAudioProcessorPort.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_audio_processor_port", 5001)));
+        editAudioProcessorPort.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_audio_processor_port", 48631)));
         editCamera1Ip.setText(sharedPreferences.getString(auditoriumName + "_camera_1_ip", "192.168.1.102"));
-        editCamera1Port.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_camera_1_port", 5002)));
+        editCamera1Port.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_camera_1_port", 5678)));
         editCamera2Ip.setText(sharedPreferences.getString(auditoriumName + "_camera_2_ip", "192.168.1.103"));
-        editCamera2Port.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_camera_2_port", 5003)));
+        editCamera2Port.setText(String.valueOf(sharedPreferences.getInt(auditoriumName + "_camera_2_port", 5678)));
     }
 
     private void saveSettings() {

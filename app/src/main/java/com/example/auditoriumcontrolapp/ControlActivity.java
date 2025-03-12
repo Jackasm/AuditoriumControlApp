@@ -2,12 +2,17 @@ package com.example.auditoriumcontrolapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +23,7 @@ import java.util.List;
 
 public class ControlActivity extends AppCompatActivity {
 
+    private static final String TAG = "ControlActivity"; // Тег для логгирования
     private NetworkManager networkManager;
     private boolean isUserSelection = false; // Флаг для отслеживания пользовательского выбора
 
@@ -39,24 +45,53 @@ public class ControlActivity extends AppCompatActivity {
         String videoProcessorIp = getDeviceIpForAuditorium(auditoriumName, "video_processor");
         int videoProcessorPort = getDevicePortForAuditorium(auditoriumName, "video_processor");
 
-        if (videoProcessorIp == null) {
-            showToast("IP-адрес видеопроцессора не найден");
+        String audioProcessorIp = getDeviceIpForAuditorium(auditoriumName, "audio_processor");
+        int audioProcessorPort = getDevicePortForAuditorium(auditoriumName, "audio_processor");
+
+        if (videoProcessorIp == null || audioProcessorIp == null) {
+            showToast("IP-адрес видеопроцессора или звукового процессора не найден");
             return;
         }
 
-        setupSpinners(videoProcessorIp, videoProcessorPort);
-        fetchCurrentSettings(auditoriumName);
+        // Логгируем начало получения настроек
+        Log.d(TAG, "Начало получения настроек для аудитории: " + auditoriumName);
+
+        // Получаем настройки видеопроцессора и звукового процессора последовательно
+        fetchVideoSettings(videoProcessorIp, videoProcessorPort, () -> {
+            fetchAudioSettings(audioProcessorIp, audioProcessorPort);
+        });
     }
 
+    private void fetchVideoSettings(String videoProcessorIp, int videoProcessorPort, Runnable onComplete) {
+        // Логгируем начало получения настроек видеопроцессора
+        Log.d(TAG, "Начало получения настроек видеопроцессора");
+
+        // Получаем список доступных видеовходов
+        checkInputsAvailability(videoProcessorIp, videoProcessorPort, availableInputs -> {
+            // Логгируем доступные видеовходы
+            Log.d(TAG, "Доступные видеовходы: " + Arrays.toString(availableInputs));
+
+            // Заполняем спиннеры доступными видеовходами
+            updateSpinners(availableInputs);
+
+            // Получаем текущие значения видеовходов и устанавливаем их в спиннеры
+            fetchVideoOutputSettings(videoProcessorIp, videoProcessorPort, 0, () -> {
+                fetchVideoOutputSettings(videoProcessorIp, videoProcessorPort, 1, () -> {
+                    // Только после этого добавляем слушатели
+                    setupSpinners(videoProcessorIp, videoProcessorPort);
+                    onComplete.run();
+                });
+            });
+        });
+    }
     private void setupSpinners(String videoProcessorIp, int videoProcessorPort) {
         Spinner spinnerPanel = findViewById(R.id.spinner_video_output_panel);
         Spinner spinnerCamera = findViewById(R.id.spinner_video_output_camera);
 
-        // Добавляем слушатели
+        // Добавляем слушатели для спиннеров
         setupSpinnerListener(spinnerPanel, videoProcessorIp, videoProcessorPort, 0);
         setupSpinnerListener(spinnerCamera, videoProcessorIp, videoProcessorPort, 1);
     }
-
     private void setupSpinnerListener(Spinner spinner, String ip, int port, int outputIndex) {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -82,7 +117,6 @@ public class ControlActivity extends AppCompatActivity {
             }
         });
     }
-
     private int getInputCode(String inputName) {
         switch (inputName) {
             case "Сигнал не выбран": return 0;
@@ -93,11 +127,9 @@ public class ControlActivity extends AppCompatActivity {
             default: return -1;
         }
     }
-
     private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, int inputCode) {
         attemptSendCommand(ipAddress, port, command, inputCode, 0);
     }
-
     private void attemptSendCommand(String ipAddress, int port, String command, int inputCode, int attempt) {
         if (attempt >= 5) {
             showToast("Не удалось переключить сигнал");
@@ -139,29 +171,70 @@ public class ControlActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchCurrentSettings(String auditoriumName) {
-        String videoProcessorIp = getDeviceIpForAuditorium(auditoriumName, "video_processor");
-        int videoProcessorPort = getDevicePortForAuditorium(auditoriumName, "video_processor");
+    private void fetchVideoOutputSettings(String ip, int port, int outputIndex, Runnable onComplete) {
+        String command = outputIndex + ",0,1,PRinp";
+        // Логгируем отправку команды для видеовыхода
+        Log.d(TAG, "Отправка команды для видеовыхода " + outputIndex + ": " + command);
 
-        if (videoProcessorIp == null) {
-            showToast("IP-адрес видеопроцессора не найден");
+        networkManager.sendCommand(ip, port, command, response -> {
+            // Логгируем полученный ответ
+            Log.d(TAG, "Получен ответ для видеовыхода " + outputIndex + ": " + response);
+
+            parseAndSetVideoSettingsForOutput(response, outputIndex);
+            onComplete.run();
+        });
+    }
+
+    private void fetchAudioSettings(String audioProcessorIp, int audioProcessorPort) {
+        // Логгируем начало получения настроек звукового процессора
+        Log.d(TAG, "Начало получения настроек звукового процессора");
+
+        // Массив ID для запросов громкости и MUTE
+        int[][] audioSettingsIds = {
+                {9, 10},  // PC: громкость, MUTE
+                {11, 12}, // VIA: громкость, MUTE
+                {7, 8},   // Микрофон 1: громкость, MUTE
+                {5, 6},   // Микрофон 2: громкость, MUTE
+                {3, 4}    // Микрофон 3: громкость, MUTE
+        };
+
+        // Начинаем последовательную отправку команд
+        fetchAudioSettingsSequentially(audioProcessorIp, audioProcessorPort, audioSettingsIds, 0);
+    }
+
+    private void fetchAudioSettingsSequentially(String ip, int port, int[][] audioSettingsIds, int index) {
+        if (index >= audioSettingsIds.length) {
+            // Логгируем завершение получения настроек звукового процессора
+            Log.d(TAG, "Завершение получения настроек звукового процессора");
             return;
         }
 
-        // Получаем список доступных видеовходов с задержкой
-        checkInputsAvailability(videoProcessorIp, videoProcessorPort, availableInputs -> {
-            // Заполняем спиннеры доступными видеовходами
-            updateSpinners(availableInputs);
+        final int deviceIndex = index; // Финальная копия для использования в лямбде
+        int volumeId = audioSettingsIds[index][0];
+        int muteId = audioSettingsIds[index][1];
 
-            // Получаем текущие значения видеовходов и устанавливаем их в спиннеры
-            sendCommandWithDelay(videoProcessorIp, videoProcessorPort, "0,0,1,PRinp", 0, response -> {
-                parseAndSetVideoSettingsForOutput(response, 0);
-                sendCommandWithDelay(videoProcessorIp, videoProcessorPort, "1,0,1,PRinp", 50, response1 -> {
-                    parseAndSetVideoSettingsForOutput(response1, 1);
+        // Логгируем отправку команды для получения громкости
+        Log.d(TAG, "Отправка команды для получения громкости устройства " + deviceIndex + ": GS " + volumeId);
 
-                    // Только после этого добавляем слушатели
-                    setupSpinners(videoProcessorIp, videoProcessorPort);
-                });
+        networkManager.sendCommand(ip, port, "GS " + volumeId, response -> {
+            // Логгируем полученный ответ для громкости
+            Log.d(TAG, "Получен ответ для громкости устройства " + deviceIndex + ": " + response);
+
+            int volume = parseAudioResponse(response);
+            updateVolumeSeekBar(deviceIndex, volume);
+
+            // Логгируем отправку команды для получения MUTE
+            Log.d(TAG, "Отправка команды для получения MUTE устройства " + deviceIndex + ": GS " + muteId);
+
+            networkManager.sendCommand(ip, port, "GS " + muteId, muteResponse -> {
+                // Логгируем полученный ответ для MUTE
+                Log.d(TAG, "Получен ответ для MUTE устройства " + deviceIndex + ": " + muteResponse);
+
+                boolean isMuted = parseMuteResponse(muteResponse);
+                updateMuteButton(deviceIndex, isMuted);
+
+                // Переходим к следующему устройству
+                fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index + 1);
             });
         });
     }
@@ -171,8 +244,8 @@ public class ControlActivity extends AppCompatActivity {
         String[] availableInputs = new String[4];
         int[] index = {0};
 
-        // Начинаем проверку с задержкой
-        checkNextInputWithDelay(ip, port, inputsToCheck, availableInputs, index, () -> {
+        // Начинаем последовательную проверку доступности входов
+        checkNextInputSequentially(ip, port, inputsToCheck, availableInputs, index, () -> {
             // Фильтруем null значения и передаем результат
             String[] filteredInputs = Arrays.stream(availableInputs)
                     .filter(input -> input != null && !input.isEmpty())
@@ -180,41 +253,28 @@ public class ControlActivity extends AppCompatActivity {
             listener.onInputsAvailable(filteredInputs);
         }, 0);
     }
-    private void checkNextInputWithDelay(String ip, int port, int[][] inputsToCheck, String[] availableInputs, int[] index, Runnable onComplete, int attempt) {
+
+    private void checkNextInputSequentially(String ip, int port, int[][] inputsToCheck, String[] availableInputs, int[] index, Runnable onComplete, int attempt) {
         if (attempt >= inputsToCheck.length) {
-            onComplete.run(); // Вызываем onComplete после проверки всех входов
+            // Все команды отправлены и обработаны
+            onComplete.run();
             return;
         }
 
         int inputCode = inputsToCheck[attempt][0];
         int yValue = inputsToCheck[attempt][1];
 
-        // Проверяем доступность текущего входа
-        checkVideoInputAvailability(ip, port, inputCode, yValue, response -> {
-            processInputAvailabilityResponse(response, availableInputs, index[0]++);
-
-            // Добавляем задержку перед проверкой следующего входа
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                checkNextInputWithDelay(ip, port, inputsToCheck, availableInputs, index, onComplete, attempt + 1);
-            }, 100); // Задержка 100 мс
-        });
-    }
-    interface OnInputsAvailableListener {
-        void onInputsAvailable(String[] availableInputs);
-    }
-
-    private void checkNextInput(String ip, int port, int[][] inputsToCheck, String[] availableInputs, int[] index, Runnable onComplete, int attempt) {
-        if (attempt >= inputsToCheck.length) {
-            onComplete.run(); // Вызываем onComplete после проверки всех входов
-            return;
-        }
-
-        int inputCode = inputsToCheck[attempt][0];
-        int yValue = inputsToCheck[attempt][1];
+        // Логгируем отправку команды для проверки доступности входа
+        Log.d(TAG, "Отправка команды для проверки доступности входа: " + inputCode + "," + yValue + ",ISsva");
 
         checkVideoInputAvailability(ip, port, inputCode, yValue, response -> {
+            // Логгируем полученный ответ
+            Log.d(TAG, "Получен ответ для проверки доступности входа: " + response);
+
             processInputAvailabilityResponse(response, availableInputs, index[0]++);
-            checkNextInput(ip, port, inputsToCheck, availableInputs, index, onComplete, attempt + 1);
+
+            // Переходим к следующему входу
+            checkNextInputSequentially(ip, port, inputsToCheck, availableInputs, index, onComplete, attempt + 1);
         });
     }
 
@@ -263,10 +323,6 @@ public class ControlActivity extends AppCompatActivity {
         spinnerCamera.setAdapter(adapter);
     }
 
-    private void sendCommandWithDelay(String ip, int port, String command, int delay, NetworkManager.OnResponseListener listener) {
-        new Handler().postDelayed(() -> networkManager.sendCommand(ip, port, command, listener), delay);
-    }
-
     private void parseAndSetVideoSettingsForOutput(String response, int outputIndex) {
         try {
             String[] parts = response.split(",");
@@ -312,6 +368,65 @@ public class ControlActivity extends AppCompatActivity {
         if (currentInput == 0) spinner.setSelection(0);
     }
 
+    private int parseAudioResponse(String response) {
+        try {
+            return Integer.parseInt(response.trim());
+        } catch (NumberFormatException e) {
+            return 0; // В случае ошибки возвращаем 0
+        }
+    }
+
+    private boolean parseMuteResponse(String response) {
+        try {
+            int value = Integer.parseInt(response.trim());
+            return value == 65535; // 65535 означает, что MUTE активирован
+        } catch (NumberFormatException e) {
+            return false; // В случае ошибки возвращаем false
+        }
+    }
+
+    private void updateVolumeSeekBar(int deviceIndex, int volume) {
+        int seekBarId = getSeekBarId(deviceIndex);
+        SeekBar seekBar = findViewById(seekBarId);
+        if (seekBar != null) {
+            // Преобразуем значение громкости (0-65535) в диапазон 0-100
+            int progress = (int) ((volume / 65535.0) * 100);
+            seekBar.setProgress(progress);
+        }
+    }
+
+    private void updateMuteButton(int deviceIndex, boolean isMuted) {
+        int buttonId = getMuteButtonId(deviceIndex);
+        Button muteButton = findViewById(buttonId);
+        if (muteButton != null) {
+            muteButton.setBackgroundTintList(ColorStateList.valueOf(
+                    isMuted ? Color.RED : Color.GREEN
+            ));
+        }
+    }
+
+    private int getSeekBarId(int deviceIndex) {
+        switch (deviceIndex) {
+            case 0: return R.id.seekBar_volume_pc;
+            case 1: return R.id.seekBar_volume_via;
+            case 2: return R.id.seekBar_volume_microphone_1;
+            case 3: return R.id.seekBar_volume_microphone_2;
+            case 4: return R.id.seekBar_volume_microphone_3;
+            default: throw new IllegalArgumentException("Invalid device index");
+        }
+    }
+
+    private int getMuteButtonId(int deviceIndex) {
+        switch (deviceIndex) {
+            case 0: return R.id.button_mute_pc;
+            case 1: return R.id.button_mute_via;
+            case 2: return R.id.button_mute_microphone_1;
+            case 3: return R.id.button_mute_microphone_2;
+            case 4: return R.id.button_mute_microphone_3;
+            default: throw new IllegalArgumentException("Invalid device index");
+        }
+    }
+
     private String getDeviceIpForAuditorium(String auditoriumName, String deviceType) {
         SharedPreferences sharedPreferences = getSharedPreferences("AuditoriumSettings", Context.MODE_PRIVATE);
         return sharedPreferences.getString(auditoriumName + "_" + deviceType + "_ip", null);
@@ -329,5 +444,9 @@ public class ControlActivity extends AppCompatActivity {
     private void showToastAndFinish(String message) {
         showToast(message);
         finish();
+    }
+
+    interface OnInputsAvailableListener {
+        void onInputsAvailable(String[] availableInputs);
     }
 }

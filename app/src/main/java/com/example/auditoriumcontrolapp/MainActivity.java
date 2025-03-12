@@ -12,15 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private NetworkManager networkManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Инициализация NetworkManager
-        networkManager = new NetworkManager();
+
 
         // Предварительная инициализация настроек для всех аудиторий
         initializeDefaultSettings();

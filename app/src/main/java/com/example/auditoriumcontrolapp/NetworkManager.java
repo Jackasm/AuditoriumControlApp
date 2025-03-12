@@ -1,9 +1,7 @@
 package com.example.auditoriumcontrolapp;
-
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,20 +11,21 @@ import java.net.Socket;
 
 public class NetworkManager {
 
-    // Интерфейс для обратного вызова при получении ответа
+    private final Handler mainHandler;
+    private static final String TAG = "NetworkManager"; // Тег для логгирования
+
+    public NetworkManager() {
+        this.mainHandler = new Handler(Looper.getMainLooper());
+    }
+
     public interface OnResponseListener {
         void onResponse(String response);
     }
 
-    /**
-     * Отправляет команду на устройство по указанному IP-адресу и порту.
-     *
-     * @param ipAddress IP-адрес устройства
-     * @param port      Порт устройства
-     * @param command   Команда для отправки
-     * @param listener  Обратный вызов для получения ответа
-     */
     public void sendCommand(String ipAddress, int port, String command, OnResponseListener listener) {
+        // Логгируем отправленную команду
+        Log.d(TAG, "Отправка команды: " + command + " на " + ipAddress + ":" + port);
+
         new Thread(() -> {
             try (Socket socket = new Socket(ipAddress, port);
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -36,44 +35,31 @@ public class NetworkManager {
                 out.println(command);
 
                 // Читаем ответ
-                String responseLine = in.readLine(); // Читаем только первую строку
-                if (responseLine == null) {
-                    responseLine = "Ошибка: пустой ответ";
-                }
-                String finalResponse = responseLine;
+                StringBuilder responseBuilder = new StringBuilder();
+                String responseLine;
+                responseLine = in.readLine();
+                responseBuilder.append(responseLine);
+
+                String response = responseBuilder.toString().trim();
+
+                // Логгируем полученный ответ
+                Log.d(TAG, "Получен ответ: " + response + " от " + ipAddress + ":" + port);
 
                 // Передаем ответ обратно в UI поток
                 if (listener != null) {
-                    runOnUiThread(() -> listener.onResponse(finalResponse));
+                    mainHandler.post(() -> listener.onResponse(response));
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
+                // Логгируем ошибку соединения
+                Log.e(TAG, "Ошибка соединения: " + e.getMessage());
+
                 // Если произошла ошибка соединения, передаем сообщение об ошибке
                 if (listener != null) {
-                    runOnUiThread(() -> listener.onResponse("Ошибка соединения"));
+                    mainHandler.post(() -> listener.onResponse("Ошибка соединения: " + e.getMessage()));
                 }
             }
         }).start();
-    }
-
-    /**
-     * Выполняет код в UI-потоке.
-     *
-     * @param runnable Код для выполнения
-     */
-    private void runOnUiThread(Runnable runnable) {
-        if (ContextHolder.getContext() == null) {
-            // Если контекст отсутствует, выводим ошибку
-            System.err.println("Context is null");
-            return;
-        }
-
-        if (ContextHolder.getContext() instanceof AppCompatActivity) {
-            ((AppCompatActivity) ContextHolder.getContext()).runOnUiThread(runnable);
-        } else {
-            // Если контекст не является AppCompatActivity, используйте Application контекст
-            new Handler(Looper.getMainLooper()).post(runnable);
-        }
     }
 }

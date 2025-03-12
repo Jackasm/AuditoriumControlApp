@@ -69,53 +69,129 @@
         </LinearLayout>
 
         <!-- Звуковой процессор -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Звуковой процессор"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="8dp" />
-
-        <SeekBar
-            android:id="@+id/seekBar_volume_device_1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"
-            android:paddingBottom="8dp" />
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-        <SeekBar
-            android:id="@+id/seekBar_volume_device_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"
-            android:paddingBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Звуковой процессор"
+                android:textSize="20sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
 
-        <SeekBar
-            android:id="@+id/seekBar_volume_device_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"
-            android:paddingBottom="8dp" />
+            <!-- PC -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
 
-        <SeekBar
-            android:id="@+id/seekBar_volume_device_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"
-            android:paddingBottom="8dp" />
+                <SeekBar
+                    android:id="@+id/seekBar_volume_pc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100" />
 
-        <SeekBar
-            android:id="@+id/seekBar_volume_device_5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"
-            android:paddingBottom="16dp" />
+                <Button
+                    android:id="@+id/button_mute_pc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MUTE"
+                    android:backgroundTint="?attr/colorControlNormal" />
+            </LinearLayout>
+
+            <!-- VIA -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <SeekBar
+                    android:id="@+id/seekBar_volume_via"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100" />
+
+                <Button
+                    android:id="@+id/button_mute_via"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MUTE"
+                    android:backgroundTint="?attr/colorControlNormal" />
+            </LinearLayout>
+
+            <!-- Микрофон 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <SeekBar
+                    android:id="@+id/seekBar_volume_microphone_1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100" />
+
+                <Button
+                    android:id="@+id/button_mute_microphone_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MUTE"
+                    android:backgroundTint="?attr/colorControlNormal" />
+            </LinearLayout>
+
+            <!-- Микрофон 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <SeekBar
+                    android:id="@+id/seekBar_volume_microphone_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100" />
+
+                <Button
+                    android:id="@+id/button_mute_microphone_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MUTE"
+                    android:backgroundTint="?attr/colorControlNormal" />
+            </LinearLayout>
+
+            <!-- Микрофон 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/seekBar_volume_microphone_3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100" />
+
+                <Button
+                    android:id="@+id/button_mute_microphone_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MUTE"
+                    android:backgroundTint="?attr/colorControlNormal" />
+            </LinearLayout>
+        </LinearLayout>
 
         <!-- Камеры -->
         <TextView
