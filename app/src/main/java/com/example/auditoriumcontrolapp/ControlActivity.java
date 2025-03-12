@@ -223,7 +223,7 @@ public class ControlActivity extends AppCompatActivity {
         networkManager.sendCommand(ip, port, "GS " + volumeId + "\r", response -> {
             if (response == null || response.trim().isEmpty()) { // Проверяем пустой ответ
                 Log.w(TAG, "Пустой ответ для громкости устройства " + deviceIndex + ", повторная попытка " + (attempt + 1));
-                new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 50);
                 return;
             }
 
@@ -239,7 +239,7 @@ public class ControlActivity extends AppCompatActivity {
                 networkManager.sendCommand(ip, port, "GS " + muteId + "\r", muteResponse -> {
                     if (muteResponse == null || muteResponse.trim().isEmpty()) { // Проверяем пустой ответ
                         Log.w(TAG, "Пустой ответ для MUTE устройства " + deviceIndex + ", повторная попытка " + (attempt + 1));
-                        new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                        new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 50);
                         return;
                     }
 
@@ -255,13 +255,13 @@ public class ControlActivity extends AppCompatActivity {
 
                     } catch (NumberFormatException e) {
                         Log.e(TAG, "Ошибка обработки MUTE для устройства " + deviceIndex + ": " + e.getMessage());
-                        new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                        new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 50);
                     }
                 });
 
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Ошибка обработки громкости для устройства " + deviceIndex + ": " + e.getMessage());
-                new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 50);
             }
         });
     }
