@@ -200,6 +200,8 @@ public class ControlActivity extends AppCompatActivity {
 
         // Начинаем последовательную отправку команд
         fetchAudioSettingsSequentially(audioProcessorIp, audioProcessorPort, audioSettingsIds, 0, 0);
+        setupVolumeSeekBars(audioProcessorIp, audioProcessorPort);
+        setupMuteButtons(audioProcessorIp, audioProcessorPort);
     }
 
     private void fetchAudioSettingsSequentially(String ip, int port, int[][] audioSettingsIds, int index, int attempt) {
@@ -416,9 +418,14 @@ public class ControlActivity extends AppCompatActivity {
         int seekBarId = getSeekBarId(deviceIndex);
         SeekBar seekBar = findViewById(seekBarId);
         if (seekBar != null) {
-            // Преобразуем значение громкости (0-65535) в диапазон 0-100
-            int progress = (int) ((volume / 65535.0) * 100);
+            // Преобразуем значение громкости из диапазона 0–65535 в диапазон 0–100
+            // Теперь 0 соответствует 32768, а 100 — 65535
+            int progress = (int) (((volume - 32768) / 32767.0) * 100);
+            if (progress < 0) progress = 0; // Ограничиваем минимальное значение
+            if (progress > 100) progress = 100; // Ограничиваем максимальное значение
             seekBar.setProgress(progress);
+        } else {
+            Log.e(TAG, "SeekBar не найден для устройства " + deviceIndex);
         }
     }
 
@@ -429,6 +436,8 @@ public class ControlActivity extends AppCompatActivity {
             muteButton.setBackgroundTintList(ColorStateList.valueOf(
                     isMuted ? Color.RED : Color.GREEN
             ));
+        } else {
+            Log.e(TAG, "Кнопка MUTE не найдена для устройства " + deviceIndex);
         }
     }
 
@@ -450,6 +459,93 @@ public class ControlActivity extends AppCompatActivity {
             case 2: return R.id.button_mute_microphone_1;
             case 3: return R.id.button_mute_microphone_2;
             case 4: return R.id.button_mute_microphone_3;
+            default: throw new IllegalArgumentException("Invalid device index");
+        }
+    }
+    private void setupVolumeSeekBars(String audioProcessorIp, int audioProcessorPort) {
+        SeekBar[] seekBars = {
+                findViewById(R.id.seekBar_volume_pc),
+                findViewById(R.id.seekBar_volume_via),
+                findViewById(R.id.seekBar_volume_microphone_1),
+                findViewById(R.id.seekBar_volume_microphone_2),
+                findViewById(R.id.seekBar_volume_microphone_3)
+        };
+
+        for (int i = 0; i < seekBars.length; i++) {
+            final int deviceIndex = i; // Финальная копия для использования в лямбде
+            seekBars[i].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (!fromUser) return; // Игнорируем программные изменения
+
+                    // Преобразуем прогресс из диапазона 0–100 в диапазон 32768–65535
+                    int volume = (int) ((progress / 100.0) * 32767) + 32768;
+
+                    String command = "CSQ " + getAudioDeviceId(deviceIndex, true) + " " + volume + "\r";
+                    Log.d(TAG, "Отправка команды настройки громкости: " + command);
+
+                    networkManager.sendCommand(audioProcessorIp, audioProcessorPort, command, response -> {
+                        Log.d(TAG, "Получен ответ после установки громкости: " + response);
+                        if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
+                            showToast("Громкость устройства " + deviceIndex + " успешно обновлена");
+                        } else {
+                            showToast("Не удалось обновить громкость устройства " + deviceIndex);
+                        }
+                    });
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
+        }
+    }
+    private void setupMuteButtons(String audioProcessorIp, int audioProcessorPort) {
+        Button[] muteButtons = {
+                findViewById(R.id.button_mute_pc),
+                findViewById(R.id.button_mute_via),
+                findViewById(R.id.button_mute_microphone_1),
+                findViewById(R.id.button_mute_microphone_2),
+                findViewById(R.id.button_mute_microphone_3)
+        };
+
+        for (int i = 0; i < muteButtons.length; i++) {
+            final int deviceIndex = i; // Финальная копия для использования в лямбде
+            muteButtons[i].setOnClickListener(view -> {
+                int muteStatus = isMuteEnabled(deviceIndex) ? 0 : 65535; // Меняем статус MUTE
+                String command = "CSQ " + getAudioDeviceId(deviceIndex, false) + " " + muteStatus + "\r";
+                Log.d(TAG, "Отправка команды управления MUTE: " + command);
+
+                networkManager.sendCommand(audioProcessorIp, audioProcessorPort, command, response -> {
+                    Log.d(TAG, "Получен ответ после управления MUTE: " + response);
+                    if (response != null && !response.equals("Ошибка соединения") && !response.equals("Ошибка: пустой ответ")) {
+                        boolean isMuted = muteStatus == 65535;
+                        updateMuteButton(deviceIndex, isMuted);
+                        showToast("Состояние MUTE устройства " + deviceIndex + " успешно обновлено");
+                    } else {
+                        showToast("Не удалось обновить состояние MUTE устройства " + deviceIndex);
+                    }
+                });
+            });
+        }
+    }
+    private boolean isMuteEnabled(int deviceIndex) {
+        int buttonId = getMuteButtonId(deviceIndex);
+        Button muteButton = findViewById(buttonId);
+        if (muteButton == null) return false;
+
+        int color = muteButton.getBackgroundTintList().getDefaultColor();
+        return color == Color.RED; // Красный цвет означает, что MUTE включен
+    }
+    private int getAudioDeviceId(int deviceIndex, boolean isVolume) {
+        switch (deviceIndex) {
+            case 0: return isVolume ? 9 : 10; // PC
+            case 1: return isVolume ? 11 : 12; // VIA
+            case 2: return isVolume ? 7 : 8; // Микрофон 1
+            case 3: return isVolume ? 5 : 6; // Микрофон 2
+            case 4: return isVolume ? 3 : 4; // Микрофон 3
             default: throw new IllegalArgumentException("Invalid device index");
         }
     }
