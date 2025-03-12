@@ -6,7 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -199,13 +199,18 @@ public class ControlActivity extends AppCompatActivity {
         };
 
         // Начинаем последовательную отправку команд
-        fetchAudioSettingsSequentially(audioProcessorIp, audioProcessorPort, audioSettingsIds, 0);
+        fetchAudioSettingsSequentially(audioProcessorIp, audioProcessorPort, audioSettingsIds, 0, 0);
     }
 
-    private void fetchAudioSettingsSequentially(String ip, int port, int[][] audioSettingsIds, int index) {
+    private void fetchAudioSettingsSequentially(String ip, int port, int[][] audioSettingsIds, int index, int attempt) {
         if (index >= audioSettingsIds.length) {
-            // Логгируем завершение получения настроек звукового процессора
             Log.d(TAG, "Завершение получения настроек звукового процессора");
+            return;
+        }
+
+        if (attempt >= 5) {
+            Log.e(TAG, "Не удалось получить настройки для устройства " + index);
+            fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index + 1, 0); // Переходим к следующему устройству
             return;
         }
 
@@ -213,29 +218,51 @@ public class ControlActivity extends AppCompatActivity {
         int volumeId = audioSettingsIds[index][0];
         int muteId = audioSettingsIds[index][1];
 
-        // Логгируем отправку команды для получения громкости
+        // Отправляем команду для получения громкости
         Log.d(TAG, "Отправка команды для получения громкости устройства " + deviceIndex + ": GS " + volumeId);
+        networkManager.sendCommand(ip, port, "GS " + volumeId + "\r", response -> {
+            if (response == null || response.trim().isEmpty()) { // Проверяем пустой ответ
+                Log.w(TAG, "Пустой ответ для громкости устройства " + deviceIndex + ", повторная попытка " + (attempt + 1));
+                new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                return;
+            }
 
-        networkManager.sendCommand(ip, port, "GS " + volumeId, response -> {
-            // Логгируем полученный ответ для громкости
-            Log.d(TAG, "Получен ответ для громкости устройства " + deviceIndex + ": " + response);
+            try {
+                // Логгируем полученный ответ
+                Log.d(TAG, "Получен ответ для громкости устройства " + deviceIndex + ": " + response);
 
-            int volume = parseAudioResponse(response);
-            updateVolumeSeekBar(deviceIndex, volume);
+                int volume = parseAudioResponse(response);
+                updateVolumeSeekBar(deviceIndex, volume);
 
-            // Логгируем отправку команды для получения MUTE
-            Log.d(TAG, "Отправка команды для получения MUTE устройства " + deviceIndex + ": GS " + muteId);
+                // Отправляем команду для получения MUTE
+                Log.d(TAG, "Отправка команды для получения MUTE устройства " + deviceIndex + ": GS " + muteId);
+                networkManager.sendCommand(ip, port, "GS " + muteId + "\r", muteResponse -> {
+                    if (muteResponse == null || muteResponse.trim().isEmpty()) { // Проверяем пустой ответ
+                        Log.w(TAG, "Пустой ответ для MUTE устройства " + deviceIndex + ", повторная попытка " + (attempt + 1));
+                        new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                        return;
+                    }
 
-            networkManager.sendCommand(ip, port, "GS " + muteId, muteResponse -> {
-                // Логгируем полученный ответ для MUTE
-                Log.d(TAG, "Получен ответ для MUTE устройства " + deviceIndex + ": " + muteResponse);
+                    try {
+                        // Логгируем полученный ответ
+                        Log.d(TAG, "Получен ответ для MUTE устройства " + deviceIndex + ": " + muteResponse);
 
-                boolean isMuted = parseMuteResponse(muteResponse);
-                updateMuteButton(deviceIndex, isMuted);
+                        boolean isMuted = parseMuteResponse(muteResponse);
+                        updateMuteButton(deviceIndex, isMuted);
 
-                // Переходим к следующему устройству
-                fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index + 1);
-            });
+                        // Переходим к следующему устройству
+                        fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index + 1, 0);
+
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, "Ошибка обработки MUTE для устройства " + deviceIndex + ": " + e.getMessage());
+                        new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+                    }
+                });
+
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Ошибка обработки громкости для устройства " + deviceIndex + ": " + e.getMessage());
+                new Handler().postDelayed(() -> fetchAudioSettingsSequentially(ip, port, audioSettingsIds, index, attempt + 1), 500);
+            }
         });
     }
 

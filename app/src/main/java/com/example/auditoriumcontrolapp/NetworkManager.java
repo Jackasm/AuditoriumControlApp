@@ -35,19 +35,16 @@ public class NetworkManager {
                 out.println(command);
 
                 // Читаем ответ
-                StringBuilder responseBuilder = new StringBuilder();
-                String responseLine;
-                responseLine = in.readLine();
-                responseBuilder.append(responseLine);
-
-                String response = responseBuilder.toString().trim();
-
-                // Логгируем полученный ответ
+                String response = in.readLine(); // Читаем одну строку
+                if (response == null) {
+                    response = ""; // Если ответ пустой, устанавливаем пустую строку
+                }
+                response = response.trim(); // Убираем лишние пробелы
                 Log.d(TAG, "Получен ответ: " + response + " от " + ipAddress + ":" + port);
-
-                // Передаем ответ обратно в UI поток
+                String trimmedResponse = response;
+// Передаем ответ в слушатель
                 if (listener != null) {
-                    mainHandler.post(() -> listener.onResponse(response));
+                    mainHandler.post(() -> listener.onResponse(trimmedResponse));
                 }
 
             } catch (IOException e) {
