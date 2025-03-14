@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         // Аудитория 1
         editor.putString("Аудитория 308_video_processor_ip", "172.17.60.204");
         editor.putString("Аудитория 308_audio_processor_ip", "172.17.60.206");
-        editor.putString("Аудитория 308_camera_1_ip", "172.17.60.8");
-        editor.putString("Аудитория 308_camera_2_ip", "172.17.60.9");
+        editor.putString("Аудитория 308_camera_1_ip", "172.17.60.208");
+        editor.putString("Аудитория 308_camera_2_ip", "172.17.60.209");
 
         // Аудитория 2
         editor.putString("Аудитория 203_video_processor_ip", "172.17.60.104");
