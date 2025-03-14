@@ -2,4 +2,10 @@
     <string name="app_name">Auditorium Control App</string>
     <string name="video_input">Выберите вход</string>
     <string name="video_output">Выберите выход</string>
+    <string name="button_right_description">Кнопка вправо</string>
+    <string name="button_up_description">Кнопка вверх</string>
+    <string name="button_down_description">Кнопка вниз</string>
+    <string name="button_left_description">Кнопка влево</string>
+    <string name="button_zoom_in_description">Кнопка приближения</string>
+    <string name="button_zoom_out_description">Кнопка отдаления</string>
 </resources>

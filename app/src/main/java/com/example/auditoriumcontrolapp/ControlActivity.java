@@ -596,7 +596,44 @@ public class ControlActivity extends AppCompatActivity {
 
     private int getDevicePortForAuditorium(String auditoriumName, String deviceType) {
         SharedPreferences sharedPreferences = getSharedPreferences("AuditoriumSettings", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(auditoriumName + "_" + deviceType + "_port", deviceType.equals("video_processor") ? 10500 : 48631);
+
+        // Определяем ключ для порта в зависимости от типа устройства
+        String portKey;
+        switch (deviceType) {
+            case "video_processor":
+                portKey = auditoriumName + "_video_processor_port";
+                break;
+            case "audio_processor":
+                portKey = auditoriumName + "_audio_processor_port";
+                break;
+            case "camera_1":
+                portKey = auditoriumName + "_camera_1_port";
+                break;
+            case "camera_2":
+                portKey = auditoriumName + "_camera_2_port";
+                break;
+            default:
+                // Если тип устройства неизвестен, возвращаем порт по умолчанию
+                return 48631;
+        }
+
+        // Получаем порт из SharedPreferences
+        return sharedPreferences.getInt(portKey, getDefaultPortForDevice(deviceType));
+    }
+
+    // Метод для получения порта по умолчанию в зависимости от типа устройства
+    private int getDefaultPortForDevice(String deviceType) {
+        switch (deviceType) {
+            case "video_processor":
+                return 10500;
+            case "audio_processor":
+                return 48631;
+            case "camera_1":
+            case "camera_2":
+                return 5678;
+            default:
+                return 48631; // Порт по умолчанию для неизвестных устройств
+        }
     }
 
     private void showToast(String message) {

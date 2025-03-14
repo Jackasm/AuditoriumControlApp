@@ -41,7 +41,7 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_control);
-        cameraPort = getIntent().getIntExtra("camera_port", 4567);
+        cameraPort = getIntent().getIntExtra("camera_port", 5678);
         // Получаем IP-адрес камеры из Intent
         cameraIp = getIntent().getStringExtra("camera_ip");
         if (cameraIp == null || cameraIp.isEmpty()) {
@@ -264,8 +264,8 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
         });
     }
     private void sendCommand(byte[] command) {
-        String commandString = new String(command, StandardCharsets.UTF_8);
-        networkManager.sendCommand(cameraIp, cameraPort, commandString, response -> {
+        String commandString = new String(command, StandardCharsets.UTF_8) + "\r";
+        networkManager.sendCommandBytes(cameraIp, cameraPort, command, response -> {
             Log.d(TAG, "Ответ от камеры: " + response);
         });
     }
