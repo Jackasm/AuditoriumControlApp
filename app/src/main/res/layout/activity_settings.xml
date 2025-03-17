@@ -8,18 +8,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/background">
 
-        <!-- Заголовок -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Настройки"
-            android:textSize="32sp"
-            android:textColor="#0000FF"
-            android:fontFamily="@font/bohema_pink"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="16dp" />
+    <!-- Видеопроцессор -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+
 
         <!-- Настройки для Аудитории 1 -->
         <include layout="@layout/auditorium_settings_item"
@@ -62,5 +61,6 @@
             android:paddingTop="16dp"
             android:clickable="true"
             android:focusable="true" />
+    </LinearLayout>
     </LinearLayout>
 </ScrollView>

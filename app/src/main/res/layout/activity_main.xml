@@ -6,19 +6,7 @@
     android:padding="16dp"
     android:background="@drawable/background"> <!-- Установка фонового изображения -->
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Выберите аудиторию"
-        android:textSize="38sp"
-        android:gravity="center"
-        android:textColor="#0000FF"
-        android:fontFamily="@font/bohema_pink"
-        android:paddingBottom="16dp"
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="24sp"
-        android:autoSizeMaxTextSize="48sp"
-        android:autoSizeStepGranularity="2sp" />
+
 
     <!-- Надпись для Аудитории 308 -->
     <TextView

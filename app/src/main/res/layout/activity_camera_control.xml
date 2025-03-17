@@ -11,6 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Дополнительный слой с фоном (100 пикселей вниз) -->
+    <View
+        android:id="@+id/background_layer"
+        android:layout_width="match_parent"
+        android:layout_height="204dp"
+        android:background="@drawable/background"
+        android:layout_alignParentTop="true" />
+
     <!-- Основной контейнер для кнопок управления -->
     <LinearLayout
         android:layout_width="wrap_content"
@@ -20,89 +28,89 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="4dp"> <!-- Отступ сверху -->
 
-    <!-- Крест для управления поворотом и наклоном -->
-    <LinearLayout
-        android:id="@+id/cross_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <!-- Кнопка "Вверх" -->
-        <ImageButton
-            android:id="@+id/button_right"
+        <!-- Крест для управления поворотом и наклоном -->
+        <LinearLayout
+            android:id="@+id/cross_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/button_right"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/button_right_description" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <!-- Горизонтальный ряд кнопок -->
+            <!-- Кнопка "Вверх" -->
+            <ImageButton
+                android:id="@+id/button_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/button_right"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/button_right_description" />
+
+            <!-- Горизонтальный ряд кнопок -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingVertical="0dp">
+
+                <!-- Кнопка "Влево" -->
+                <ImageButton
+                    android:id="@+id/button_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/button_up"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/button_up_description" />
+
+                <!-- Кнопка "Вправо" -->
+                <ImageButton
+                    android:id="@+id/button_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/button_down"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginLeft="70dp"
+                    android:contentDescription="@string/button_down_description" />
+            </LinearLayout>
+
+            <!-- Кнопка "Вниз" -->
+            <ImageButton
+                android:id="@+id/button_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/button_left"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/button_left_description" />
+        </LinearLayout>
+
+        <!-- Вертикальный контейнер для кнопок "Приблизить" и "Отдалить" -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:gravity="center"
-            android:paddingVertical="0dp">
+            android:layout_marginStart="16dp"> <!-- Отступ слева -->
 
-            <!-- Кнопка "Влево" -->
+            <!-- Кнопка "Приблизить" -->
             <ImageButton
-                android:id="@+id/button_up"
+                android:id="@+id/button_zoom_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/button_up"
+                android:src="@drawable/button_zoom_in"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/button_up_description" />
+                android:contentDescription="@string/button_zoom_in_description"
+                android:padding="8dp" />
 
-            <!-- Кнопка "Вправо" -->
+            <!-- Кнопка "Отдалить" -->
             <ImageButton
-                android:id="@+id/button_down"
+                android:id="@+id/button_zoom_out"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/button_down"
+                android:src="@drawable/button_zoom_out"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_marginLeft="70dp"
-                android:contentDescription="@string/button_down_description" />
+                android:contentDescription="@string/button_zoom_out_description"
+                android:padding="8dp"
+                android:layout_marginTop="32dp" /> <!-- Отступ сверху -->
         </LinearLayout>
-
-        <!-- Кнопка "Вниз" -->
-        <ImageButton
-            android:id="@+id/button_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/button_left"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/button_left_description" />
     </LinearLayout>
-
-    <!-- Вертикальный контейнер для кнопок "Приблизить" и "Отдалить" -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginStart="16dp"> <!-- Отступ слева -->
-
-        <!-- Кнопка "Приблизить" -->
-        <ImageButton
-            android:id="@+id/button_zoom_in"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/button_zoom_in"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/button_zoom_in_description"
-            android:padding="8dp" />
-
-        <!-- Кнопка "Отдалить" -->
-        <ImageButton
-            android:id="@+id/button_zoom_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/button_zoom_out"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/button_zoom_out_description"
-            android:padding="8dp"
-            android:layout_marginTop="32dp" /> <!-- Отступ сверху -->
-    </LinearLayout>
-</LinearLayout>
-    </RelativeLayout>
+</RelativeLayout>

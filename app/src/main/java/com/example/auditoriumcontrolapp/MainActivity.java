@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        setTitle("Выбор аудитории");
 
         // Предварительная инициализация настроек для всех аудиторий
         initializeDefaultSettings();

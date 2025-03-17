@@ -41,6 +41,7 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_control);
+        setTitle("Управление камерой");
         cameraPort = getIntent().getIntExtra("camera_port", 5678);
         // Получаем IP-адрес камеры из Intent
         cameraIp = getIntent().getStringExtra("camera_ip");
