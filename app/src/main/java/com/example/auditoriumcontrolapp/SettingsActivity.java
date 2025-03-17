@@ -28,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
         setupAuditoriumSettings("Аудитория 503", findViewById(R.id.auditorium_4_settings));
 
         // Кнопка сохранения
-        Button buttonSaveSettings = findViewById(R.id.button_save_settings);
+        TextView buttonSaveSettings = findViewById(R.id.button_save_settings);
         buttonSaveSettings.setOnClickListener(v -> saveSettings());
     }
 

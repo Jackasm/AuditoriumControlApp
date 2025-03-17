@@ -11,7 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Аудитория 1"
-        android:textSize="18sp"
+        android:textSize="32sp"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
         android:paddingBottom="8dp" />
 
     <!-- Видеопроцессор -->
@@ -19,7 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Видеопроцессор"
-        android:textSize="16sp"
+        android:textSize="32sp"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
         android:paddingBottom="4dp" />
 
     <EditText
@@ -27,21 +31,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="IP-адрес видеопроцессора"
-        android:inputType="textUri" />
+        android:textSize="32sp"
+        android:inputType="textUri"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <EditText
         android:id="@+id/edit_video_processor_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Порт видеопроцессора"
-        android:inputType="number" />
+        android:textSize="32sp"
+        android:inputType="number"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <!-- Звуковой процессор -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Звуковой процессор"
-        android:textSize="16sp"
+        android:textSize="32sp"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
         android:paddingTop="8dp"
         android:paddingBottom="4dp" />
 
@@ -50,21 +62,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="IP-адрес звукового процессора"
-        android:inputType="textUri" />
+        android:textSize="32sp"
+        android:inputType="textUri"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <EditText
         android:id="@+id/edit_audio_processor_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Порт звукового процессора"
-        android:inputType="number" />
+        android:textSize="32sp"
+        android:inputType="number"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <!-- Камера 1 -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Камера 1"
-        android:textSize="16sp"
+        android:textSize="32sp"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
         android:paddingTop="8dp"
         android:paddingBottom="4dp" />
 
@@ -73,21 +93,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="IP-адрес камеры 1"
-        android:inputType="textUri" />
+        android:textSize="32sp"
+        android:inputType="textUri"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <EditText
         android:id="@+id/edit_camera_1_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Порт камеры 1"
-        android:inputType="number" />
+        android:textSize="32sp"
+        android:inputType="number"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <!-- Камера 2 -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Камера 2"
-        android:textSize="16sp"
+        android:textSize="32sp"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
         android:paddingTop="8dp"
         android:paddingBottom="4dp" />
 
@@ -96,12 +124,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="IP-адрес камеры 2"
-        android:inputType="textUri" />
+        android:textSize="32sp"
+        android:inputType="textUri"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 
     <EditText
         android:id="@+id/edit_camera_2_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Порт камеры 2"
-        android:inputType="number" />
+        android:textSize="32sp"
+        android:inputType="number"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink" />
 </LinearLayout>
