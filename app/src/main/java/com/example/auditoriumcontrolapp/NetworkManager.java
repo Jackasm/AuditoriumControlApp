@@ -35,11 +35,11 @@ public class NetworkManager {
 
                 // Отправляем команду
                 out.println(command);
-                try {
+                /*try {
                     Thread.sleep(5); // Задержка 5 миллисекунд
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Ошибка при задержке: " + e.getMessage());
-                }
+                } */
                 // Читаем ответ
                 String response = in.readLine(); // Читаем одну строку
                 if (response == null) {
@@ -80,12 +80,7 @@ public class NetworkManager {
                 out.write(command); // Отправляем байты
                 out.flush(); // Убеждаемся, что данные отправлены
 
-                // Добавляем задержку в 5 мс
-                try {
-                    Thread.sleep(5); // Задержка 5 миллисекунд
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "Ошибка при задержке: " + e.getMessage());
-                }
+
 
                 // Читаем ответ
                 byte[] buffer = new byte[1024]; // Буфер на 1024 байта

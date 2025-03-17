@@ -3,52 +3,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/background"> <!-- Установка фонового изображения -->
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Выберите аудиторию"
-        android:textSize="24sp"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="16dp" />
-
-    <Button
-        android:id="@+id/button_auditorium_308"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Аудитория 308"
-        android:layout_marginBottom="8dp" />
+        android:text="Выберите аудиторию"
+        android:textSize="38sp"
+        android:gravity="center"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
+        android:paddingBottom="16dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="24sp"
+        android:autoSizeMaxTextSize="48sp"
+        android:autoSizeStepGranularity="2sp" />
 
-    <!-- Кнопка Аудитория 203 -->
-    <Button
-        android:id="@+id/button_auditorium_203"
+    <!-- Надпись для Аудитории 308 -->
+    <TextView
+        android:id="@+id/text_auditorium_308"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
+        android:fontFamily="@font/bohema_pink"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:text="Аудитория 308"
+        android:textColor="#0000FF"
+        android:textSize="38sp" />
+
+    <!-- Надпись для Аудитории 203 -->
+    <TextView
+        android:id="@+id/text_auditorium_203"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Аудитория 203"
-        android:layout_marginBottom="8dp" />
+        android:textSize="38sp"
+        android:gravity="center"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
+        android:paddingBottom="16dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeStepGranularity="2sp" />
 
-    <!-- Кнопка Аудитория 206 -->
-    <Button
-        android:id="@+id/button_auditorium_206"
+    <!-- Надпись для Аудитории 206 -->
+    <TextView
+        android:id="@+id/text_auditorium_206"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Аудитория 206"
-        android:layout_marginBottom="8dp" />
+        android:textSize="38sp"
+        android:gravity="center"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
+        android:paddingBottom="16dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeStepGranularity="2sp" />
 
-    <!-- Кнопка Аудитория 503 -->
-    <Button
-        android:id="@+id/button_auditorium_503"
+    <!-- Надпись для Аудитории 503 -->
+    <TextView
+        android:id="@+id/text_auditorium_503"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Аудитория 503" />
+        android:text="Аудитория 503"
+        android:textSize="38sp"
+        android:gravity="center"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
+        android:paddingBottom="16dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeMaxTextSize="42sp"
+        android:autoSizeStepGranularity="2sp" />
 
-    <!-- Кнопка Настройки -->
-    <Button
+    <!-- Надпись для Настроек -->
+    <TextView
         android:id="@+id/button_settings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Настройки"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="16dp" />
+        android:textSize="38sp"
+        android:gravity="center"
+        android:textColor="#0000FF"
+        android:fontFamily="@font/bohema_pink"
+        android:paddingTop="16dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeStepGranularity="2sp" />
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setupAuditoriumButton("Аудитория 503");
 
         // Настройка кнопки "Настройки"
-        Button buttonSettings = findViewById(R.id.button_settings);
+        TextView buttonSettings = findViewById(R.id.button_settings);
         if (buttonSettings != null) {
             buttonSettings.setOnClickListener(v -> {
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
      * @param auditoriumName Название аудитории
      */
     private void setupAuditoriumButton(String auditoriumName) {
-        Button button = findViewById(getAuditoriumButtonId(auditoriumName));
+        TextView button = findViewById(getAuditoriumButtonId(auditoriumName));
         if (button != null) {
             button.setOnClickListener(v -> {
                 String[] deviceIps = getDeviceIpsForAuditorium(auditoriumName);
@@ -105,13 +106,13 @@ public class MainActivity extends AppCompatActivity {
     private int getAuditoriumButtonId(String auditoriumName) {
         switch (auditoriumName) {
             case "Аудитория 308":
-                return R.id.button_auditorium_308;
+                return R.id.text_auditorium_308;
             case "Аудитория 203":
-                return R.id.button_auditorium_203;
+                return R.id.text_auditorium_203;
             case "Аудитория 206":
-                return R.id.button_auditorium_206;
+                return R.id.text_auditorium_206;
             case "Аудитория 503":
-                return R.id.button_auditorium_503;
+                return R.id.text_auditorium_503;
             default:
                 return -1; // Недопустимое значение
         }

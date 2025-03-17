@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/background"> <!-- Установка фонового изображения -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,9 +21,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Видеопроцессор"
-                android:textSize="20sp"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="8dp" />
+                android:textSize="38sp"
+                android:gravity="center"
+                android:textColor="#0000FF"
+                android:fontFamily="@font/bohema_pink"
+                android:paddingBottom="16dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="24sp"
+                android:autoSizeMaxTextSize="48sp"
+                android:autoSizeStepGranularity="2sp" />
 
             <!-- Спиннер для видеовыхода "Панель" -->
             <LinearLayout
@@ -35,7 +42,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Панель:"
-                    android:paddingEnd="8dp" />
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
 
                 <Spinner
                     android:id="@+id/spinner_video_output_panel"
@@ -46,7 +61,7 @@
                     android:entries="@array/video_inputs" />
             </LinearLayout>
 
-            <!-- Спиннер для видеовыхода "ВКамера" -->
+            <!-- Спиннер для видеовыхода "Камера" -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,7 +71,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Камера:"
-                    android:paddingEnd="8dp" />
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
 
                 <Spinner
                     android:id="@+id/spinner_video_output_camera"
@@ -79,217 +102,287 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Звуковой процессор"
-                android:textSize="20sp"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="8dp" />
+                android:textSize="38sp"
+                android:gravity="center"
+                android:textColor="#0000FF"
+                android:fontFamily="@font/bohema_pink"
+                android:paddingBottom="16dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="24sp"
+                android:autoSizeMaxTextSize="48sp"
+                android:autoSizeStepGranularity="2sp" />
 
+            <!-- PC -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
 
+                <!-- Название устройства -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="PC"
+                    android:textSize="28sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
 
-                <!-- PC -->
+                <!-- Строка с ползунком и надписью MUTE -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
-                    <!-- Название устройства -->
+                    <!-- Ползунок громкости -->
+                    <SeekBar
+                        android:id="@+id/seekBar_volume_pc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:layout_gravity="center_vertical" />
+
+                    <!-- Надпись MUTE -->
                     <TextView
+                        android:id="@+id/text_mute_pc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PC"
-                        android:textSize="16sp"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingBottom="4dp" />
-
-                    <!-- Строка с ползунком и кнопкой -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Ползунок громкости -->
-                        <SeekBar
-                            android:id="@+id/seekBar_volume_pc"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:max="100"
-                            android:layout_gravity="center_vertical" />
-
-                        <!-- Кнопка MUTE -->
-                        <Button
-                            android:id="@+id/button_mute_pc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="MUTE"
-                            android:backgroundTint="?attr/colorControlNormal" />
-                    </LinearLayout>
+                        android:text="MUTE"
+                        android:textSize="28sp"
+                        android:gravity="center"
+                        android:textColor="#0000FF"
+                        android:fontFamily="@font/bohema_pink"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:clickable="true"
+                        android:focusable="true" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <!-- VIA -->
+            <!-- VIA -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <!-- Название устройства -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="VIA"
+                    android:textSize="28sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
+
+                <!-- Строка с ползунком и надписью MUTE -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
-                    <!-- Название устройства -->
+                    <!-- Ползунок громкости -->
+                    <SeekBar
+                        android:id="@+id/seekBar_volume_via"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:layout_gravity="center_vertical" />
+
+                    <!-- Надпись MUTE -->
                     <TextView
+                        android:id="@+id/text_mute_via"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="VIA"
-                        android:textSize="16sp"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingBottom="4dp" />
-
-                    <!-- Строка с ползунком и кнопкой -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Ползунок громкости -->
-                        <SeekBar
-                            android:id="@+id/seekBar_volume_via"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:max="100"
-                            android:layout_gravity="center_vertical" />
-
-                        <!-- Кнопка MUTE -->
-                        <Button
-                            android:id="@+id/button_mute_via"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="MUTE"
-                            android:backgroundTint="?attr/colorControlNormal" />
-                    </LinearLayout>
+                        android:text="MUTE"
+                        android:textSize="28sp"
+                        android:gravity="center"
+                        android:textColor="#0000FF"
+                        android:fontFamily="@font/bohema_pink"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:clickable="true"
+                        android:focusable="true" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <!-- Микрофон 1 -->
+            <!-- Микрофон 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <!-- Название устройства -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Микрофон 1"
+                    android:textSize="28sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
+
+                <!-- Строка с ползунком и надписью MUTE -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
-                    <!-- Название устройства -->
+                    <!-- Ползунок громкости -->
+                    <SeekBar
+                        android:id="@+id/seekBar_volume_microphone_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:layout_gravity="center_vertical" />
+
+                    <!-- Надпись MUTE -->
                     <TextView
+                        android:id="@+id/text_mute_microphone_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Микрофон 1"
-                        android:textSize="16sp"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingBottom="4dp" />
-
-                    <!-- Строка с ползунком и кнопкой -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Ползунок громкости -->
-                        <SeekBar
-                            android:id="@+id/seekBar_volume_microphone_1"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:max="100"
-                            android:layout_gravity="center_vertical" />
-
-                        <!-- Кнопка MUTE -->
-                        <Button
-                            android:id="@+id/button_mute_microphone_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="MUTE"
-                            android:backgroundTint="?attr/colorControlNormal" />
-                    </LinearLayout>
+                        android:text="MUTE"
+                        android:textSize="28sp"
+                        android:gravity="center"
+                        android:textColor="#0000FF"
+                        android:fontFamily="@font/bohema_pink"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:clickable="true"
+                        android:focusable="true" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <!-- Микрофон 2 -->
+            <!-- Микрофон 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <!-- Название устройства -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Микрофон 2"
+                    android:textSize="28sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
+
+                <!-- Строка с ползунком и надписью MUTE -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
-                    <!-- Название устройства -->
+                    <!-- Ползунок громкости -->
+                    <SeekBar
+                        android:id="@+id/seekBar_volume_microphone_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:layout_gravity="center_vertical" />
+
+                    <!-- Надпись MUTE -->
                     <TextView
+                        android:id="@+id/text_mute_microphone_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Микрофон 2"
-                        android:textSize="16sp"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingBottom="4dp" />
-
-                    <!-- Строка с ползунком и кнопкой -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Ползунок громкости -->
-                        <SeekBar
-                            android:id="@+id/seekBar_volume_microphone_2"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:max="100"
-                            android:layout_gravity="center_vertical" />
-
-                        <!-- Кнопка MUTE -->
-                        <Button
-                            android:id="@+id/button_mute_microphone_2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="MUTE"
-                            android:backgroundTint="?attr/colorControlNormal" />
-                    </LinearLayout>
+                        android:text="MUTE"
+                        android:textSize="28sp"
+                        android:gravity="center"
+                        android:textColor="#0000FF"
+                        android:fontFamily="@font/bohema_pink"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:clickable="true"
+                        android:focusable="true" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <!-- Микрофон 3 -->
+            <!-- Микрофон 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <!-- Название устройства -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Микрофон 3"
+                    android:textSize="28sp"
+                    android:gravity="center"
+                    android:textColor="#0000FF"
+                    android:fontFamily="@font/bohema_pink"
+                    android:paddingBottom="16dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="24sp"
+                    android:autoSizeMaxTextSize="48sp"
+                    android:autoSizeStepGranularity="2sp" />
+
+                <!-- Строка с ползунком и надписью MUTE -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
-                    <!-- Название устройства -->
+                    <!-- Ползунок громкости -->
+                    <SeekBar
+                        android:id="@+id/seekBar_volume_microphone_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:layout_gravity="center_vertical" />
+
+                    <!-- Надпись MUTE -->
                     <TextView
+                        android:id="@+id/text_mute_microphone_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Микрофон 3"
-                        android:textSize="16sp"
-                        android:layout_gravity="center_horizontal"
-                        android:paddingBottom="4dp" />
-
-                    <!-- Строка с ползунком и кнопкой -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Ползунок громкости -->
-                        <SeekBar
-                            android:id="@+id/seekBar_volume_microphone_3"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:max="100"
-                            android:layout_gravity="center_vertical" />
-
-                        <!-- Кнопка MUTE -->
-                        <Button
-                            android:id="@+id/button_mute_microphone_3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="MUTE"
-                            android:backgroundTint="?attr/colorControlNormal" />
-                    </LinearLayout>
+                        android:text="MUTE"
+                        android:textSize="28sp"
+                        android:gravity="center"
+                        android:textColor="#0000FF"
+                        android:fontFamily="@font/bohema_pink"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:clickable="true"
+                        android:focusable="true" />
                 </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+
         <!-- Камеры -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -297,23 +390,33 @@
             android:orientation="vertical"
             android:paddingTop="8dp">
 
-            <!-- Кнопка Камера 1 -->
-            <Button
-                android:id="@+id/button_camera_1"
+            <!-- Надпись Камера 1 -->
+            <TextView
+                android:id="@+id/text_camera_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Управление Камерой 1"
-                android:textSize="16sp"
-                android:padding="8dp" />
+                android:text="Камера 1"
+                android:textSize="28sp"
+                android:gravity="center"
+                android:textColor="#0000FF"
+                android:fontFamily="@font/bohema_pink"
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true" />
 
-            <!-- Кнопка Камера 2 -->
-            <Button
-                android:id="@+id/button_camera_2"
+            <!-- Надпись Камера 2 -->
+            <TextView
+                android:id="@+id/text_camera_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Управление Камерой 2"
-                android:textSize="16sp"
-                android:padding="8dp" />
+                android:text="Камера 2"
+                android:textSize="28sp"
+                android:gravity="center"
+                android:textColor="#0000FF"
+                android:fontFamily="@font/bohema_pink"
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
     </LinearLayout>

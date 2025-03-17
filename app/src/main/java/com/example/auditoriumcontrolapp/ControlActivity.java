@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -435,11 +436,10 @@ public class ControlActivity extends AppCompatActivity {
 
     private void updateMuteButton(int deviceIndex, boolean isMuted) {
         int buttonId = getMuteButtonId(deviceIndex);
-        Button muteButton = findViewById(buttonId);
+        TextView muteButton = findViewById(buttonId);
         if (muteButton != null) {
-            muteButton.setBackgroundTintList(ColorStateList.valueOf(
-                    isMuted ? Color.RED : Color.GREEN
-            ));
+            muteButton.setTextColor(isMuted ? Color.RED : Color.GREEN);
+
         } else {
             Log.e(TAG, "Кнопка MUTE не найдена для устройства " + deviceIndex);
         }
@@ -458,11 +458,11 @@ public class ControlActivity extends AppCompatActivity {
 
     private int getMuteButtonId(int deviceIndex) {
         switch (deviceIndex) {
-            case 0: return R.id.button_mute_pc;
-            case 1: return R.id.button_mute_via;
-            case 2: return R.id.button_mute_microphone_1;
-            case 3: return R.id.button_mute_microphone_2;
-            case 4: return R.id.button_mute_microphone_3;
+            case 0: return R.id.text_mute_pc;
+            case 1: return R.id.text_mute_via;
+            case 2: return R.id.text_mute_microphone_1;
+            case 3: return R.id.text_mute_microphone_2;
+            case 4: return R.id.text_mute_microphone_3;
             default: throw new IllegalArgumentException("Invalid device index");
         }
     }
@@ -507,12 +507,12 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
     private void setupMuteButtons(String audioProcessorIp, int audioProcessorPort) {
-        Button[] muteButtons = {
-                findViewById(R.id.button_mute_pc),
-                findViewById(R.id.button_mute_via),
-                findViewById(R.id.button_mute_microphone_1),
-                findViewById(R.id.button_mute_microphone_2),
-                findViewById(R.id.button_mute_microphone_3)
+        TextView[] muteButtons = {
+                findViewById(R.id.text_mute_pc),
+                findViewById(R.id.text_mute_via),
+                findViewById(R.id.text_mute_microphone_1),
+                findViewById(R.id.text_mute_microphone_2),
+                findViewById(R.id.text_mute_microphone_3)
         };
 
         for (int i = 0; i < muteButtons.length; i++) {
@@ -537,10 +537,10 @@ public class ControlActivity extends AppCompatActivity {
     }
     private boolean isMuteEnabled(int deviceIndex) {
         int buttonId = getMuteButtonId(deviceIndex);
-        Button muteButton = findViewById(buttonId);
+        TextView muteButton = findViewById(buttonId);
         if (muteButton == null) return false;
 
-        int color = muteButton.getBackgroundTintList().getDefaultColor();
+        int color = muteButton.getCurrentTextColor();// getBackgroundTintList().getDefaultColor();
         return color == Color.RED; // Красный цвет означает, что MUTE включен
     }
     private int getAudioDeviceId(int deviceIndex, boolean isVolume) {
@@ -554,8 +554,8 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
     private void setupCameraButtons(String auditoriumName) {
-        Button buttonCamera1 = findViewById(R.id.button_camera_1);
-        Button buttonCamera2 = findViewById(R.id.button_camera_2);
+        TextView buttonCamera1 = findViewById(R.id.text_camera_1);
+        TextView buttonCamera2 = findViewById(R.id.text_camera_2);
 
         buttonCamera1.setOnClickListener(view -> {
             String cameraIp = getDeviceIpForAuditorium(auditoriumName, "camera_1");
