@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -350,9 +351,22 @@ public class ControlActivity extends AppCompatActivity {
         items.add("Сигнал не выбран");
         items.addAll(Arrays.asList(availableInputs));
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        // Загружаем шрифт
+        Typeface bohemaPink = getResources().getFont(R.font.bohema_pink);
+
+        // Создаем кастомный адаптер
+        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(
+                this, // Контекст
+                android.R.layout.simple_spinner_item, // Стандартный макет для элемента
+                items.toArray(new String[0]), // Данные для Spinner
+                bohemaPink, // Шрифт
+                Color.BLUE // Цвет текста (синий)
+        );
+
+        // Устанавливаем макет для выпадающего списка
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        // Применяем адаптер к Spinner
         spinnerPanel.setAdapter(adapter);
         spinnerCamera.setAdapter(adapter);
     }
