@@ -203,7 +203,7 @@ public class AudioSettingsFetcher implements SettingsFetcher {
 
     private void showToast(String message) {
         if (context != null) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         } else {
             Log.e(TAG, "Context is null. Unable to show toast: " + message);
         }

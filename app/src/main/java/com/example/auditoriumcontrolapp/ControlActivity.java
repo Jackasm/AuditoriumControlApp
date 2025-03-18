@@ -18,15 +18,10 @@ public class ControlActivity extends AppCompatActivity {
 
     private static final String TAG = "ControlActivity"; // Тег для логгирования
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
-
-
 
         String auditoriumName = getIntent().getStringExtra("auditorium_name");
         if (auditoriumName == null || auditoriumName.isEmpty()) {
@@ -85,7 +80,6 @@ public class ControlActivity extends AppCompatActivity {
         executor.submit(() -> videoSettingsFetcher.fetchSettings(null));
         executor.submit(() -> audioSettingsFetcher.fetchSettings(null));
         executor.shutdown();
-
 
         // Настройка кнопок для управления камерами
         setupCameraButtons(auditoriumName);
