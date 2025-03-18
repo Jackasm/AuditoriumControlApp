@@ -71,6 +71,9 @@ public class ControlActivity extends AppCompatActivity {
     private void fetchVideoSettings(String videoProcessorIp, int videoProcessorPort, Runnable onComplete) {
         // Логгируем начало получения настроек видеопроцессора
         Log.d(TAG, "Начало получения настроек видеопроцессора");
+        String [] availableInputsDefault = new String[0];
+
+        updateSpinners(availableInputsDefault);
 
         // Получаем список доступных видеовходов
         checkInputsAvailability(videoProcessorIp, videoProcessorPort, availableInputs -> {

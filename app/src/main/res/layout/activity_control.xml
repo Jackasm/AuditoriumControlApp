@@ -59,8 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:prompt="@string/video_input"
-                    android:entries="@array/video_inputs"
-                    style="@style/CustomSpinnerStyle" />
+                    android:entries="@array/video_inputs" />
             </LinearLayout>
 
             <!-- Спиннер для видеовыхода "Камера" -->
@@ -89,8 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:prompt="@string/video_input"
-                    android:entries="@array/video_inputs"
-                    style="@style/CustomSpinnerStyle" />
+                    android:entries="@array/video_inputs" />
             </LinearLayout>
         </LinearLayout>
 
