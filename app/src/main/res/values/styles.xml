@@ -1,0 +1,14 @@
+<resources>
+    <style name="CustomSeekBar">
+        <item name="android:progressDrawable">@drawable/progress_custom</item>
+        <item name="android:thumb">@drawable/thumb_custom</item>
+        <item name="android:maxHeight">8dp</item> <!-- Высота SeekBar -->
+        <item name="android:minHeight">8dp</item> <!-- Высота SeekBar -->
+    </style>
+    <style name="CustomSpinnerStyle">
+        <item name="android:textColor">#0000FF</item>
+        <item name="android:fontFamily">@font/bohema_pink</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+</resources>

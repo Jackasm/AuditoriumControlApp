@@ -1,0 +1,20 @@
+<!-- res/drawable/progress_custom.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Фон прогресса -->
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="#E0E0E0" /> <!-- Серый цвет фона -->
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <!-- Прогресс (заполненная часть) -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <solid android:color="#0000FF" /> <!-- Синий цвет прогресса -->
+                <corners android:radius="4dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

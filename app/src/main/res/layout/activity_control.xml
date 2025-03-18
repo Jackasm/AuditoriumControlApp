@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@drawable/background"> <!-- Установка фонового изображения -->
+    android:background="@drawable/background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,7 +59,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:prompt="@string/video_input"
-                    android:entries="@array/video_inputs" />
+                    android:entries="@array/video_inputs"
+                    style="@style/CustomSpinnerStyle" />
             </LinearLayout>
 
             <!-- Спиннер для видеовыхода "Камера" -->
@@ -88,7 +89,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:prompt="@string/video_input"
-                    android:entries="@array/video_inputs" />
+                    android:entries="@array/video_inputs"
+                    style="@style/CustomSpinnerStyle" />
             </LinearLayout>
         </LinearLayout>
 
@@ -148,6 +150,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:max="100"
+                        android:progress="50"
+                        style="@style/CustomSeekBar"
                         android:layout_gravity="center_vertical" />
 
                     <!-- Надпись MUTE -->
@@ -202,6 +206,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:max="100"
+                        android:progress="50"
+                        style="@style/CustomSeekBar"
                         android:layout_gravity="center_vertical" />
 
                     <!-- Надпись MUTE -->
@@ -256,6 +262,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:max="100"
+                        android:progress="50"
+                        style="@style/CustomSeekBar"
                         android:layout_gravity="center_vertical" />
 
                     <!-- Надпись MUTE -->
@@ -310,6 +318,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:max="100"
+                        android:progress="50"
+                        style="@style/CustomSeekBar"
                         android:layout_gravity="center_vertical" />
 
                     <!-- Надпись MUTE -->
@@ -364,6 +374,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:max="100"
+                        android:progress="50"
+                        style="@style/CustomSeekBar"
                         android:layout_gravity="center_vertical" />
 
                     <!-- Надпись MUTE -->
