@@ -1,0 +1,174 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/background"
+        android:padding="16dp">
+
+        <!-- Заголовок аудитории -->
+        <TextView
+            android:id="@+id/text_auditorium_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Аудитория"
+            android:textSize="38sp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="18sp"
+            android:autoSizeMaxTextSize="36sp"
+            android:autoSizeStepGranularity="2sp"
+            android:fontFamily="@font/bohema_pink"
+            android:textStyle="bold"
+            android:textColor="#0000FF"
+            android:paddingBottom="8dp" />
+
+        <!-- Заголовок "Видеопроцессор" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Видеопроцессор"
+            android:textSize="32sp"
+            android:fontFamily="@font/bohema_pink"
+            android:textStyle="bold"
+            android:textColor="#0000FF"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <!-- IP видеопроцессора -->
+        <EditText
+            android:id="@+id/edit_video_processor_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="IP видеопроцессора"
+            android:inputType="text"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Порт видеопроцессора -->
+        <EditText
+            android:id="@+id/edit_video_processor_port"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Порт видеопроцессора"
+            android:inputType="number"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Заголовок "Аудиопроцессор" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Аудиопроцессор"
+            android:textSize="32sp"
+            android:fontFamily="@font/bohema_pink"
+            android:textStyle="bold"
+            android:textColor="#0000FF"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <!-- IP аудиопроцессора -->
+        <EditText
+            android:id="@+id/edit_audio_processor_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="IP аудиопроцессора"
+            android:inputType="text"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Порт аудиопроцессора -->
+        <EditText
+            android:id="@+id/edit_audio_processor_port"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Порт аудиопроцессора"
+            android:inputType="number"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Заголовок "Камера 1" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Камера 1"
+            android:textSize="32sp"
+            android:fontFamily="@font/bohema_pink"
+            android:textStyle="bold"
+            android:textColor="#0000FF"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <!-- IP камеры 1 -->
+        <EditText
+            android:id="@+id/edit_camera_1_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="IP камеры 1"
+            android:inputType="text"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Порт камеры 1 -->
+        <EditText
+            android:id="@+id/edit_camera_1_port"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Порт камеры 1"
+            android:inputType="number"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Заголовок "Камера 2" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Камера 2"
+            android:textSize="32sp"
+            android:fontFamily="@font/bohema_pink"
+            android:textStyle="bold"
+            android:textColor="#0000FF"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
+        <!-- IP камеры 2 -->
+        <EditText
+            android:id="@+id/edit_camera_2_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="IP камеры 2"
+            android:inputType="text"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+
+        <!-- Порт камеры 2 -->
+        <EditText
+            android:id="@+id/edit_camera_2_port"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Порт камеры 2"
+            android:inputType="number"
+            android:textSize="32sp"
+            android:textColor="#0000FF"
+            android:textColorHint="#0000FF"
+            android:fontFamily="@font/bohema_pink" />
+    </LinearLayout>
+</ScrollView>
