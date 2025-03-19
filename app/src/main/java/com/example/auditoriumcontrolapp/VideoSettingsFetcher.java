@@ -106,16 +106,37 @@ public class VideoSettingsFetcher implements SettingsFetcher {
         if (spinnerCamera != null) spinnerCamera.setAdapter(adapter);
     }
     private void fetchVideoOutputSettings(String ip, int port, int outputIndex, Runnable onComplete) {
+        // Максимальное количество попыток
+        final int maxAttempts = 5;
+        // Запускаем процесс с первой попытки
+        attemptFetchVideoOutputSettings(ip, port, outputIndex, onComplete, 1, maxAttempts);
+    }
+
+    private void attemptFetchVideoOutputSettings(String ip, int port, int outputIndex, Runnable onComplete, int attempt, int maxAttempts) {
         String command = outputIndex + ",0,1,PRinp";
         // Логгируем отправку команды для видеовыхода
-        Log.d(TAG, "Отправка команды для видеовыхода " + outputIndex + ": " + command);
+        Log.d(TAG, "Попытка " + attempt + ": Отправка команды для видеовыхода " + outputIndex + ": " + command);
 
         networkManager.sendCommand(ip, port, command, response -> {
             // Логгируем полученный ответ
-            Log.d(TAG, "Получен ответ для видеовыхода " + outputIndex + ": " + response);
+            Log.d(TAG, "Попытка " + attempt + ": Получен ответ для видеовыхода " + outputIndex + ": " + response);
 
-            parseAndSetVideoSettingsForOutput(response, outputIndex);
-            onComplete.run();
+            // Проверяем, содержит ли ответ "PRinp"
+            if (response != null && response.contains("PRinp")) {
+                // Если ответ корректный, парсим настройки и завершаем выполнение
+                parseAndSetVideoSettingsForOutput(response, outputIndex);
+                onComplete.run();
+            } else {
+                // Если ответ некорректный и количество попыток не исчерпано
+                if (attempt < maxAttempts) {
+                    Log.d(TAG, "Ответ не содержит PRinp. Повторная попытка " + (attempt + 1));
+                    // Рекурсивно вызываем метод для следующей попытки
+                    attemptFetchVideoOutputSettings(ip, port, outputIndex, onComplete, attempt + 1, maxAttempts);
+                } else {
+                    // Если все попытки исчерпаны, логгируем ошибку
+                    Log.e(TAG, "Не удалось получить корректный ответ после " + maxAttempts + " попыток.");
+                }
+            }
         });
     }
     private void setupSpinners(String videoProcessorIp, int videoProcessorPort) {
@@ -193,7 +214,7 @@ public class VideoSettingsFetcher implements SettingsFetcher {
                     targetSpinner.setOnItemSelectedListener(listener);
                 }
             } else {
-                showToast("Некорректный формат ответа видеопроцессора " + response); //ddd
+                showToast("Некорректный формат ответа видеопроцессора " + response);
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             showToast("Ошибка при обработке ответа видеопроцессора: " + e.getMessage());
