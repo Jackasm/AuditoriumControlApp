@@ -35,11 +35,11 @@ public class NetworkManager {
 
                 // Отправляем команду
                 out.println(command);
-                /*try {
+                try {
                     Thread.sleep(5); // Задержка 5 миллисекунд
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Ошибка при задержке: " + e.getMessage());
-                } */
+                }
                 // Читаем ответ
                 String response = in.readLine(); // Читаем одну строку
                 if (response == null) {

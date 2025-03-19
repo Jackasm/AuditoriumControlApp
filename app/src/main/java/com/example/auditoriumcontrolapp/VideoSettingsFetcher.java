@@ -253,7 +253,7 @@ public class VideoSettingsFetcher implements SettingsFetcher {
         });
     }
     private void showToast(String message) {
-       // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
     private void checkVideoInputAvailability(String ipAddress, int port, int inputCode, int yValue, NetworkManager.OnResponseListener listener) {
         String command = inputCode + "," + yValue + ",ISsva";
