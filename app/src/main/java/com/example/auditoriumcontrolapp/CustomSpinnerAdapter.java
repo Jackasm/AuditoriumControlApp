@@ -1,7 +1,6 @@
 package com.example.auditoriumcontrolapp;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -104,18 +102,13 @@ public class MainActivity extends AppCompatActivity {
      * @return ID кнопки или -1, если название не найдено
      */
     private int getAuditoriumButtonId(String auditoriumName) {
-        switch (auditoriumName) {
-            case "Аудитория 308":
-                return R.id.text_auditorium_308;
-            case "Аудитория 203":
-                return R.id.text_auditorium_203;
-            case "Аудитория 206":
-                return R.id.text_auditorium_206;
-            case "Аудитория 503":
-                return R.id.text_auditorium_503;
-            default:
-                return -1; // Недопустимое значение
-        }
+        return switch (auditoriumName) {
+            case "Аудитория 308" -> R.id.text_auditorium_308;
+            case "Аудитория 203" -> R.id.text_auditorium_203;
+            case "Аудитория 206" -> R.id.text_auditorium_206;
+            case "Аудитория 503" -> R.id.text_auditorium_503;
+            default -> -1; // Недопустимое значение
+        };
     }
 
     /**

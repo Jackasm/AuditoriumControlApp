@@ -1,11 +1,7 @@
 package com.example.auditoriumcontrolapp;
 
-
-
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,7 +13,7 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
-import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 
 public class CameraControlActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
@@ -25,7 +21,6 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
     private String cameraIp; // IP-адрес камеры
     private int cameraPort; // Порт камеры
     private NetworkManager networkManager; // Менеджер для отправки команд
-    private TextureView textureView; // TextureView для отображения видео
     private LibVLC libVLC; // Объект LibVLC
     private MediaPlayer mediaPlayer; // Объект MediaPlayer
     private static final byte[] STOP = { (byte) 0x81, 0x01, 0x06, 0x01, 0x00, 0x00, 0x03, 0x03, (byte) 0xFF };
@@ -53,7 +48,8 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
         // Инициализируем NetworkManager
         networkManager = new NetworkManager();
         // Находим TextureView
-        textureView = findViewById(R.id.video_texture_view);
+        // TextureView для отображения видео
+        TextureView textureView = findViewById(R.id.video_texture_view);
         textureView.setSurfaceTextureListener(this); // Устанавливаем слушатель
 
         // Инициализация LibVLC с дополнительными параметрами
@@ -119,16 +115,7 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
             Log.e(TAG, "Ошибка воспроизведения: " + e.getMessage());
             Toast.makeText(this, "Ошибка воспроизведения", Toast.LENGTH_SHORT).show();
         }
-        // Применяем сдвиг картинки
-        Matrix matrix = new Matrix();
-        int videoWidth = 1920;
-        int videoHeight = 1080;
-        Log.d(TAG, "Размеры видео: " + videoWidth + "x" + videoHeight);
-        float scaleX = (float) textureView.getWidth() / videoWidth;
-        float scaleY = (float) textureView.getHeight() / videoHeight;
-        //matrix.setScale(scaleY , scaleX * 2);
-        //matrix.postRotate(90); // Поворачиваем видео на 90 градусов
-        textureView.setTransform(matrix);
+
     }
 
     @Override
@@ -265,7 +252,6 @@ public class CameraControlActivity extends AppCompatActivity implements TextureV
         });
     }
     private void sendCommand(byte[] command) {
-        String commandString = new String(command, StandardCharsets.UTF_8) + "\r";
         networkManager.sendCommandBytes(cameraIp, cameraPort, command, response -> {
             Log.d(TAG, "Ответ от камеры: " + response);
         });

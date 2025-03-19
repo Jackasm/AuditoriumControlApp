@@ -221,14 +221,14 @@ public class VideoSettingsFetcher implements SettingsFetcher {
         }
     }
     private int getInputCode(String inputName) {
-        switch (inputName) {
-            case "Сигнал не выбран": return 0;
-            case "VIA": return 4;
-            case "PC": return 5;
-            case "Камера 1": return 7;
-            case "Камера 2": return 8;
-            default: return -1;
-        }
+        return switch (inputName) {
+            case "Сигнал не выбран" -> 0;
+            case "VIA" -> 4;
+            case "PC" -> 5;
+            case "Камера 1" -> 7;
+            case "Камера 2" -> 8;
+            default -> -1;
+        };
     }
     private void sendChangeVideoOutputCommand(String ipAddress, int port, String command, int inputCode) {
         attemptSendCommand(ipAddress, port, command, inputCode, 0);

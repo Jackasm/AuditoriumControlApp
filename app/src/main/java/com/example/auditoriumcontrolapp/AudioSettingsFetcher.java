@@ -191,14 +191,14 @@ public class AudioSettingsFetcher implements SettingsFetcher {
     }
 
     private int getAudioDeviceId(int deviceIndex, boolean isVolume) {
-        switch (deviceIndex) {
-            case 0: return isVolume ? 9 : 10; // PC
-            case 1: return isVolume ? 11 : 12; // VIA
-            case 2: return isVolume ? 7 : 8; // Микрофон 1
-            case 3: return isVolume ? 5 : 6; // Микрофон 2
-            case 4: return isVolume ? 3 : 4; // Микрофон 3
-            default: throw new IllegalArgumentException("Invalid device index");
-        }
+        return switch (deviceIndex) {
+            case 0 -> isVolume ? 9 : 10; // PC
+            case 1 -> isVolume ? 11 : 12; // VIA
+            case 2 -> isVolume ? 7 : 8; // Микрофон 1
+            case 3 -> isVolume ? 5 : 6; // Микрофон 2
+            case 4 -> isVolume ? 3 : 4; // Микрофон 3
+            default -> throw new IllegalArgumentException("Invalid device index");
+        };
     }
 
     private void showToast(String message) {

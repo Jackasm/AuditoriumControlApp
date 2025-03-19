@@ -156,17 +156,12 @@ public class ControlActivity extends AppCompatActivity {
 
     // Метод для получения порта по умолчанию в зависимости от типа устройства
     private int getDefaultPortForDevice(String deviceType) {
-        switch (deviceType) {
-            case "video_processor":
-                return 10500;
-            case "audio_processor":
-                return 48631;
-            case "camera_1":
-            case "camera_2":
-                return 5678;
-            default:
-                return 48631; // Порт по умолчанию для неизвестных устройств
-        }
+        return switch (deviceType) {
+            case "video_processor" -> 10500;
+            case "audio_processor" -> 48631;
+            case "camera_1", "camera_2" -> 5678;
+            default -> 0; // Порт по умолчанию для неизвестных устройств
+        };
     }
 
     private void showToast(String message) {
