@@ -56,11 +56,11 @@ public class NetworkManager {
             } catch (IOException e) {
                 e.printStackTrace();
                 // Логгируем ошибку соединения
-                Log.e(TAG, "Ошибка соединения: " + e.getMessage());
+                Log.e(TAG, "Ошибка: " + e.getMessage());
 
                 // Если произошла ошибка соединения, передаем сообщение об ошибке
                 if (listener != null) {
-                    mainHandler.post(() -> listener.onResponse("Ошибка соединения: " + e.getMessage()));
+                    mainHandler.post(() -> listener.onResponse("Ошибка: " + e.getMessage()));
                 }
             }
         }).start();
