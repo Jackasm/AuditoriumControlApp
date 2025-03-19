@@ -294,7 +294,7 @@ public class VideoSettingsFetcher implements SettingsFetcher {
                     };
                 }
             } else {
-                showToast("Некорректный формат ответа ISsva");
+                showToast("Некорректный формат ответа ISsva " + response);
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             showToast("Ошибка при обработке ответа ISsva: " + e.getMessage());
