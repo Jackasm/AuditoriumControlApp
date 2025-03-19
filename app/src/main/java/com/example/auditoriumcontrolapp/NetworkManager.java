@@ -36,7 +36,7 @@ public class NetworkManager {
                 // Отправляем команду
                 out.println(command);
                 try {
-                    Thread.sleep(50); // Задержка 5 миллисекунд
+                    Thread.sleep(5); // Задержка 5 миллисекунд
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Ошибка при задержке: " + e.getMessage());
                 }

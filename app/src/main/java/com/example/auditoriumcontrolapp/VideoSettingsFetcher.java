@@ -193,7 +193,7 @@ public class VideoSettingsFetcher implements SettingsFetcher {
                     targetSpinner.setOnItemSelectedListener(listener);
                 }
             } else {
-                showToast("Некорректный формат ответа видеопроцессора");
+                showToast("Некорректный формат ответа видеопроцессора " + response);
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             showToast("Ошибка при обработке ответа видеопроцессора: " + e.getMessage());
