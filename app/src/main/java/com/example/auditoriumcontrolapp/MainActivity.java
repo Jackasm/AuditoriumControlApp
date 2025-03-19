@@ -24,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
         initializeDefaultSettings();
 
         // Настройка кнопок для каждой аудитории
-        setupAuditoriumButton("Аудитория 308");
         setupAuditoriumButton("Аудитория 203");
         setupAuditoriumButton("Аудитория 206");
+        setupAuditoriumButton("Аудитория 308");
         setupAuditoriumButton("Аудитория 503");
 
         // Настройка кнопки "Настройки"

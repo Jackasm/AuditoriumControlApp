@@ -19,21 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <!-- Надпись для Аудитории 308 -->
-    <TextView
-        android:id="@+id/text_auditorium_308"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoSizeMaxTextSize="36sp"
-        android:autoSizeMinTextSize="18sp"
-        android:autoSizeStepGranularity="2sp"
-        android:autoSizeTextType="uniform"
-        android:fontFamily="@font/bohema_pink"
-        android:gravity="center"
-        android:paddingBottom="16dp"
-        android:text="Аудитория 308"
-        android:textColor="#0000FF"
-        android:textSize="38sp" />
+
 
     <!-- Надпись для Аудитории 203 -->
     <TextView
@@ -66,6 +52,22 @@
         android:autoSizeMinTextSize="18sp"
         android:autoSizeMaxTextSize="36sp"
         android:autoSizeStepGranularity="2sp" />
+
+    <!-- Надпись для Аудитории 308 -->
+    <TextView
+        android:id="@+id/text_auditorium_308"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeMinTextSize="18sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
+        android:fontFamily="@font/bohema_pink"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:text="Аудитория 308"
+        android:textColor="#0000FF"
+        android:textSize="38sp" />
 
     <!-- Надпись для Аудитории 503 -->
     <TextView

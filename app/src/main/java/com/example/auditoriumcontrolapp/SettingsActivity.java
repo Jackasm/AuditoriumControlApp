@@ -20,9 +20,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Список названий аудиторий
         List<String> auditoriumNames = Arrays.asList(
-                "Аудитория 308",
                 "Аудитория 203",
                 "Аудитория 206",
+                "Аудитория 308",
                 "Аудитория 503"
         );
 
