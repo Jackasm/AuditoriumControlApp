@@ -60,6 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:prompt="@string/video_input"
+                    android:popupBackground="@drawable/background"
                     android:entries="@array/video_inputs" />
             </LinearLayout>
 
@@ -89,6 +90,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:prompt="@string/video_input"
+                    android:popupBackground="@drawable/background"
                     android:entries="@array/video_inputs" />
             </LinearLayout>
         </LinearLayout>
