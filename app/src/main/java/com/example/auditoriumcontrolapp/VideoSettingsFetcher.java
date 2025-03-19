@@ -277,8 +277,40 @@ public class VideoSettingsFetcher implements SettingsFetcher {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
     private void checkVideoInputAvailability(String ipAddress, int port, int inputCode, int yValue, NetworkManager.OnResponseListener listener) {
+        // Максимальное количество попыток для отправки команды
+        final int maxAttempts = 5;
+        // Запускаем процесс с первой попытки
+        attemptCheckVideoInputAvailability(ipAddress, port, inputCode, yValue, listener, 1, maxAttempts);
+    }
+
+    private void attemptCheckVideoInputAvailability(String ipAddress, int port, int inputCode, int yValue, NetworkManager.OnResponseListener listener, int attempt, int maxAttempts) {
         String command = inputCode + "," + yValue + ",ISsva";
-        networkManager.sendCommand(ipAddress, port, command, listener);
+
+        // Логгируем отправку команды
+        Log.d(TAG, "Попытка " + attempt + ": Отправка команды: " + command);
+
+        networkManager.sendCommand(ipAddress, port, command, response -> {
+            // Логгируем полученный ответ
+            Log.d(TAG, "Попытка " + attempt + ": Получен ответ: " + response);
+
+            // Проверяем, содержит ли ответ "ISsva"
+            if (response != null && response.contains("ISsva")) {
+                // Если ответ корректный, передаем его в слушатель
+                listener.onResponse(response);
+            } else {
+                // Если ответ некорректный и количество попыток не исчерпано
+                if (attempt < maxAttempts) {
+                    Log.d(TAG, "Ответ не содержит ISsva. Повторная попытка " + (attempt + 1));
+                    // Рекурсивно вызываем метод для следующей попытки
+                    attemptCheckVideoInputAvailability(ipAddress, port, inputCode, yValue, listener, attempt + 1, maxAttempts);
+                } else {
+                    // Если все попытки исчерпаны, логгируем ошибку
+                    Log.e(TAG, "Не удалось получить корректный ответ после " + maxAttempts + " попыток.");
+                    // Передаем null или пустую строку в слушатель, чтобы уведомить о неудаче
+                    listener.onResponse(null);
+                }
+            }
+        });
     }
     private void setSpinnerValue(Spinner spinner, int currentInput) {
         if (spinner == null || currentInput < 0 || currentInput > 8) return;
