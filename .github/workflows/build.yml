@@ -1,4 +1,4 @@
-name: Build AuditoriumControl
+name: Build and Release
 
 on:
   push:
@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Права на создание релиза
     
     steps:
     - uses: actions/checkout@v4
@@ -27,22 +29,19 @@ jobs:
       run: |
         cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/AuditoriumControl.apk
     
-    - name: Upload APK
+    - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: AuditoriumControl
         path: app/build/outputs/apk/debug/AuditoriumControl.apk
     
     - name: Create Release
-      uses: ncipollo/release-action@v1
+      uses: softprops/action-gh-release@v1  # <-- ДРУГОЙ ЭКШН
       with:
-        artifacts: "app/build/outputs/apk/debug/AuditoriumControl.apk"
-        tag: build-${{ github.run_number }}
+        tag_name: build-${{ github.run_number }}
         name: AuditoriumControl Build ${{ github.run_number }}
-        body: |
-          📱 AuditoriumControl APK
-          📅 Собрано: $(date)
-          🔢 Build: #${{ github.run_number }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        files: app/build/outputs/apk/debug/AuditoriumControl.apk
         draft: false
         prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
