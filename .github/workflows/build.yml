@@ -27,14 +27,60 @@ jobs:
     
     - name: Rename APK
       run: |
-        cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/AuditoriumControl.apk
+        mkdir -p app/build/outputs/apk/release
+        cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/AuditoriumControl.apk
+    
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AuditoriumControl
+        path: app/build/outputs/apk/release/AuditoriumControl.apk
     
     - name: Cleanup old releases
-      uses: dev-drprasad/delete-older-releases@v0.3.2
+      run: |
+        echo "🗑️ Удаляем старые релизы..."
+        RELEASES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/releases")
+        RELEASE_IDS=$(echo "$RELEASES" | jq -r '.[] | select(.draft == false) | .id')
+        for ID in $RELEASE_IDS; do
+          echo "Удаление релиза $ID"
+          curl -s -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/$ID"
+        done
+        
+        echo "🗑️ Удаляем старые теги..."
+        TAGS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/tags")
+        TAG_NAMES=$(echo "$TAGS" | jq -r '.[].name')
+        for TAG in $TAG_NAMES; do
+          echo "Удаление тега $TAG"
+          curl -s -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$TAG"
+        done
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
       with:
-        keep_latest: 1  # Оставляем только последний релиз
-        delete_tags: true  # Удаляем и теги
+        tag_name: latest
+        name: AuditoriumControl
+        files: app/build/outputs/apk/release/AuditoriumControl.apk
+        draft: false
+        prerelease: false
+        make_latest: true
+        body: |
+          ## 🚀 AuditoriumControl
+          
+          Последняя сборка приложения.
+          
+          ### 📥 Скачать
+          [Скачать AuditoriumControl.apk](https://github.com/${{ github.repository }}/releases/latest/download/AuditoriumControl.apk)
+          
+          ### 📱 Установка
+          1. Скачайте APK
+          2. Разрешите установку из неизвестных источников
+          3. Установите приложение
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Create Release
