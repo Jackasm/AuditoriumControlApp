@@ -80,27 +80,4 @@ jobs:
           2. Разрешите установку из неизвестных источников
           3. Установите приложение
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: build-${{ github.run_number }}
-        name: AuditoriumControl Build ${{ github.run_number }}
-        files: app/build/outputs/apk/debug/AuditoriumControl.apk
-        draft: false
-        prerelease: false
-        make_latest: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
-    - name: Create Release
-      uses: softprops/action-gh-release@v1  # <-- ДРУГОЙ ЭКШН
-      with:
-        tag_name: build-${{ github.run_number }}
-        name: AuditoriumControl Build ${{ github.run_number }}
-        files: app/build/outputs/apk/debug/AuditoriumControl.apk
-        draft: false
-        prerelease: true
-      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
